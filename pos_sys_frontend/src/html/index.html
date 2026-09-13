@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* App Main Window */
+        .app-window {
+            width: 8000px;
+            height: 100vh;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* Top Title Bar */
+        .title-bar {
+            background-color: #ffffff;
+            height: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+            border-bottom: 1px solid #ccc;
+            font-size: 11px;
+            color: #333;
+        }
+
+        .title-bar .close-btn {
+            background-color: #d9534f;
+            color: white;
+            width: 18px;
+            height: 18px;
+            text-align: center;
+            line-height: 18px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Main Body Area */
+        .main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100% - 25px);
+            width: 100%;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #614035;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0 10px 0;
+            color: white;
+            z-index: 20;
+        }
+
+        /* Profile Section */
+        .profile-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            background-color: #8ed0d0;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .avatar svg {
+            width: 45px;
+            height: 45px;
+            fill: #3b2820;
+        }
+
+        .welcome-text {
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* Navigation Menu Links */
+        .nav-menu {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+            padding: 0 15px;
+            flex-grow: 1;
+        }
+
+        .nav-link {
+            display: block;
+            width: 100%;
+            height: 8%;
+            background-color: #4a2f26;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 15px;
+            border: 1px solid #3b231b;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #382119;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            width: calc(100% - 30px);
+            height: 5%;
+            margin: 0 15px 10px;
+            background-color: #4a2f26;
+            color: white;
+            border: 1px solid #3b231b;
+            padding: 8px 0;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 2px;
+        }
+
+        .logout-btn:hover {
+            background-color: #782921;
+        }
+
+        /* Right Side Content Display Frame */
+        .content-area {
+            flex: 1;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        /* Frame to hold linked HTML pages */
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* --- WELCOME SLIDE CONTAINER --- */
+        .welcome-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Slide Background Image */
+        .welcome-screen .slide-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.55); /* Darkens image slightly so text pops */
+            z-index: 1;
+        }
+        .slide-content {
+            text-align: center;
+            color: #ffffff;
+            z-index: 2;
+            padding: 0 20px;
+        }
+        /* JUMPING / BOUNCING TITLE ANIMATION */
+        .hero-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #ffffff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            display: inline-block;
+            animation: bounceJump 1.8s infinite ease-in-out;
+        }
+
+        @keyframes bounceJump {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            color: #e2e2e2;
+            margin-bottom: 18px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-shop-now {
+            display: inline-block;
+            background-color: #0f824c;
+            color: #ffffff;
+            border: none;
+            padding: 9px 24px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn-shop-now:hover {
+            background-color: #095933;
+            transform: scale(1.05);
+        }
+
+        /* Bottom Slider Indicators */
+        .slider-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .dot {
+            width: 18px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+        }
+
+        .dot.active {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-window">
+        <!-- System Title Bar -->
+        <div class="title-bar">
+            <h2>Restaurant Management System</h2>
+        </div>
+
+        <div class="main-container">
+            <!-- Sidebar Area -->
+            <aside class="sidebar">
+                <div class="profile-container">
+                    <div class="avatar">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <div class="welcome-text">Welcome, Admin!</div>
+                </div>
+
+                <nav class="nav-menu">
+                    <a href="Dashbord.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Dashboard</a>
+                    <a href="shop.html" id="nav-shop" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Shop</a>
+                    <a href="Inventory.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Inventory</a>
+                    <a href="Categories.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Categories</a>
+                    <a href="Customer.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Customers</a>
+                </nav>
+
+                <button class="logout-btn">Logout</button>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="content-area">
+                <div id="welcomeScreen" class="welcome-screen">
+                    <!-- Food Photo Slide Background -->
+                    <img src="https://hips.hearstapps.com/hmg-prod/images/bangkok-photo-evan-sung-650cd604084a4.jpg" class="slide-bg" alt="Restaurant Food Banner">
+                    
+                    <div class="slide-content">
+                        <h1 class="hero-title">Welcome to<br>NitaNit Restaurant</h1>
+                        <p class="hero-subtitle">Order your daily fresh meals delivered to your doorstep.</p>
+                        <a href="shop.html" target="contentFrame" class="btn-shop-now" onclick="openShopPage()">Shop Now</a>
+                    </div>
+                </div>
+
+                <!-- Inline Frame to load pages -->
+                <iframe name="contentFrame" class="content-frame"></iframe>
+            </main>
+        </div>
+    </div>
+
+    <!-- Navigation JS -->
+    <script>
+        function hideWelcomeScreen(element) {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            if (welcomeScreen) {
+                welcomeScreen.style.display = 'none';
+            }
+
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => link.classList.remove('active'));
+
+            if (element) {
+                element.classList.add('active');
+            }
+        }
+
+        function openShopPage() {
+            const shopNavLink = document.getElementById('nav-shop');
+            hideWelcomeScreen(shopNavLink);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soup</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f7f5f1;
+            font-family: Arial, sans-serif;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 25px 40px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .card {
+            width: 18rem;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-body h4 {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 5px 0 10px;
+        }
+
+        .card-body p {
+            color: #555;
+            font-weight: 600;
+            margin: 0 0 15px;
+        }
+
+        .order-btn {
+            background: #6f452c;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .order-btn:hover {
+            background: #4e2f1d;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt2NTlft-HJkdI1x7HQx_QngVOzdAOwffMRNRgAvZovmOPWbbsUNNIiUw&s=10" alt="Tranna">
+            <div class="card-body">
+                <h4>Tranna</h4>
+                <p>$5.00</p>
+                <button class="order-btn" onclick="addToOrder('Tranna', 5)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.cookingclassy.com/wp-content/uploads/2024/05/grilled-chicken-salad-02.jpg" alt="Chicken Salad">
+            <div class="card-body">
+                <h4>Chicken Salad</h4>
+                <p>$4.5</p>
+                <button class="order-btn" onclick="addToOrder('Chicken Salad', 4.5)">Order </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr7GeqgoTpR9N8-0fZ-UjkaxTD_cpaVyYFRBszm__uzsuq6rYGQ91d85s&s=10" alt="Cobb Salad">
+            <div class="card-body">
+                <h4>Cobb Salad</h4>
+                <p>$2.5</p>
+                <button class="order-btn" onclick="addToOrder('Cobb Salad', 2.5)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://feelgoodfoodie.net/wp-content/uploads/2024/06/Mixed-Greens-Salad-08.jpg" alt="Mixed Greens Salad">
+            <div class="card-body">
+                <h4>Mixed Greens Salad</h4>
+                <p>$3.00</p>
+                <button class="order-btn" onclick="addToOrder('Mixed Greens Salad', 3)">Order</button>
+            </div>
+        </div>
+    </div>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://cdn.bakedbree.com/uploads/2026/01/a-tossed_salad_recipe-feature-1.jpeg" alt="Tossed Salad">
+            <div class="card-body">
+                <h4>Tossed Salad</h4>
+                <p>$3.5</p>
+                <button class="order-btn" onclick="addToOrder('Tossed Salad', 3.5)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.eatingbirdfood.com/wp-content/uploads/2022/05/berry-salad-hero.jpg" alt="Summary Berry Salad">
+            <div class="card-body">
+                <h4>Summary Berry Salad</h4>
+                <p>$3.00</p>
+                <button class="order-btn" onclick="addToOrder('Summary Berry Salad', 3)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://cookinglsl.com/wp-content/uploads/2021/01/steak-salad-03.jpg" alt="Steak Salad">
+            <div class="card-body">
+                <h4>Steak Salad</h4>
+                <p>$10.00</p>
+                <button class="order-btn" onclick="addToOrder('Steak Salad', 10)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://therecipecritic.com/wp-content/uploads/2026/06/grilled-shrimp-salad.jpg" alt="Grilled Shrimp Salad">
+            <div class="card-body">
+                <h4>Grilled Shrimp Salad</h4>
+                <p>$8.00</p>
+                <button class="order-btn" onclick="addToOrder('Grilled Shrimp Salad', 8)">Order</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let order = [];
+        function addToOrder(name, price) {
+            const existingItem = order.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                order.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem("order", JSON.stringify(order));
+            alert(name + " added to order!");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soup</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f7f5f1;
+            font-family: Arial, sans-serif;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 25px 40px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .card {
+            width: 18rem;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-body h4 {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 5px 0 10px;
+        }
+
+        .card-body p {
+            color: #555;
+            font-weight: 600;
+            margin: 0 0 15px;
+        }
+
+        .order-btn {
+            background: #6f452c;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .order-btn:hover {
+            background: #4e2f1d;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://www.rachelcooks.com/wp-content/uploads/2025/09/Chicken-Farro-Soup-30web-square.jpg" alt="Chicken Farro Soup">
+            <div class="card-body">
+                <h4>Chicken Farro Soup</h4>
+                <p>$12.00</p>
+                <button class="order-btn" onclick="addToOrder('Chicken Farro Soup', 12)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://joyfoodsunshine.com/wp-content/uploads/2021/02/best-homemade-tomato-soup-recipe-1x1-1-500x500.jpg" alt="Tomato Soup">
+            <div class="card-body">
+                <h4>Tomato Soup</h4>
+                <p>$8.00</p>
+                <button class="order-btn" onclick="addToOrder('Tomato Soup', 8)">Order </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://cdn.aboutamom.com/uploads/2024/10/potato-vegetable-soup-recipe-a_aam_potato_vegetable_soup_future_2-jpg.jpeg" alt="Vegetable Soup">
+            <div class="card-body">
+                <h4>Vegetable Soup</h4>
+                <p>$7.00</p>
+                <button class="order-btn" onclick="addToOrder('Vegetable Soup', 7)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.mushroomcouncil.com/wp-content/uploads/2017/11/mushroom-soup-3-scaled.jpg" alt="Easy Mushroom Soup">
+            <div class="card-body">
+                <h4>Easy Mushroom Soup</h4>
+                <p>$4.00</p>
+                <button class="order-btn" onclick="addToOrder('Easy Mushroom Soup', 4)">Order</button>
+            </div>
+        </div>
+    </div>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://www.dontgobaconmyheart.co.uk/wp-content/uploads/2025/09/baked-boursin-soup.jpg" alt="Baked boursin soup">
+            <div class="card-body">
+                <h4>Baked boursin soup</h4>
+                <p>$10.00</p>
+                <button class="order-btn" onclick="addToOrder('Baked boursin soup', 10)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.thespruceeats.com/thmb/jHsJALzCTvUaUJHHaW0ReJ3mFl4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-183767127-5837359d5f9b58d5b11a97a2.jpg" alt="Miso Soup with Tofu">
+            <div class="card-body">
+                <h4>Miso Soup with Tofu</h4>
+                <p>$9.00</p>
+                <button class="order-btn" onclick="addToOrder('Miso Soup with Tofu', 9)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://herbivorecucina.com/wp-content/uploads/2023/12/Creamy-celery-soup-2-scaled.jpg" alt="Creamy Celery Soup">
+            <div class="card-body">
+                <h4>Creamy Celery Soup</h4>
+                <p>$15.00</p>
+                <button class="order-btn" onclick="addToOrder('Creamy Celery Soup', 15)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeghLHmPAsbVBrEhkCDcR3Ar2U7hkinuXTJHhqvU-m9AUUOqnEHWDkVsg&s=10" alt="Beef Soup">
+            <div class="card-body">
+                <h4>Beef Soup</h4>
+                <p>$5.00</p>
+                <button class="order-btn" onclick="addToOrder('Beef Soup', 5)">Order</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let order = [];
+        function addToOrder(name, price) {
+            const existingItem = order.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                order.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem("order", JSON.stringify(order));
+            alert(name + " added to order!");
+        }
+    </script>
+</body>
+</html>

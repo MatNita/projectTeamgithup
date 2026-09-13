@@ -1,111 +1,123 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
 body {
-  margin: 0;
+    background-color: #d8d8d8;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* GUI Window Outer Frame */
+.window-frame {
+    width: 850px;
+    height: 600px;
+    background-color: #ffffff;
+    border: 1px solid #999999;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* Window Bar Header */
+.window-bar {
+    height: 26px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 12px;
+    color: #333333;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* Main Body Layout */
+.window-body {
+    display: flex;
+    flex: 1;
+    height: calc(100% - 26px);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* SIDEBAR (Color matching image perfectly) */
+.sidebar {
+    width: 230px;
+    background-color: #61433b; /* Exact Brown Color from screenshot */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 15px 15px 15px;
+    height: 100%;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Avatar Circle Container */
+.avatar-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #a3e3e3;
+    border: 2px solid #e0c896;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.avatar-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.welcome-text {
+    color: #ffffff;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* Navigation Buttons List */
+.menu-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nav-btn {
+    width: 100%;
+    height: 38px;
+    background-color: #402822; /* Dark Brown Button background */
+    color: #ffffff;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+}
+
+.nav-btn:hover {
+    background-color: #52352e;
+}
+
+/* Active State (Highlighted like 'Shop' button in your photo) */
+.nav-btn.active {
+    background-color: #a47c61; /* Light Tan/Brown active state */
+    color: #ffffff;
+}
+
+/* Logout Button attached at the bottom */
+.logout-btn {
+    margin-top: auto;
+    background-color: #402822;
+}
+
+/* Right Blank Area */
+.main-panel {
+    flex: 1;
+    background-color: #eeeeee;
+    border-left: 1px solid #cccccc;
 }

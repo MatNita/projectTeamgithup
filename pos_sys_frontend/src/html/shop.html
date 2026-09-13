@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - PART-FOWL</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sub-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #222222;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #000000;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            font-size: 0.75rem;
+            color: #666666;
+            font-style: italic;
+        }
+
+        /* Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        /* Card */
+        .card {
+            background-color: #ffffff;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+
+            /* Remove underline from link */
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Image */
+        .image-container {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .image-container img {
+            transform: scale(1.05);
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 90px;
+        }
+
+        .category-name {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #111111;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+
+        .cta-link {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #111111;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .card:hover .cta-link {
+            color: #e63946;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <div class="sub-title">Menu</div>
+            <h1 class="main-title">PART-FOWL</h1>
+        </header>
+
+        <main class="menu-grid">
+
+            <!-- Main Courses -->
+            <a href="MainCourse.html" class="card">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=600&q=80"
+                         alt="Main Courses">
+                </div>
+
+                <div class="card-body">
+                    <h2 class="category-name">Main Courses</h2>
+                    <span class="cta-link">Check To Menu</span>
+                </div>
+            </a>
+
+
+            <!-- Soups -->
+            <a href="Soup.html" class="card">
+                <div class="image-container">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbPzGBP5Cu79XWVpIy1_m2-NhPM9SsfHFuxgHobj7imA&s=10"
+                         alt="Soups">
+                </div>
+
+                <div class="card-body">
+                    <h2 class="category-name">Soups</h2>
+                    <span class="cta-link">Check To Menu</span>
+                </div>
+            </a>
+
+
+            <!-- Salads -->
+            <a href="Salads.html" class="card">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80"
+                         alt="Salads">
+                </div>
+
+                <div class="card-body">
+                    <h2 class="category-name">Salads</h2>
+                    <span class="cta-link">Check To Menu</span>
+                </div>
+            </a>
+
+            <!-- Desserts -->
+            <a href="Dessert.html" class="card">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=600&q=80"
+                         alt="Desserts">
+                </div>
+
+                <div class="card-body">
+                    <h2 class="category-name">Desserts</h2>
+                    <span class="cta-link">Check To Menu</span>
+                </div>
+            </a>
+
+            <!-- Drinks -->
+            <a href="Drink.html" class="card">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80"
+                         alt="Drinks">
+                </div>
+
+                <div class="card-body">
+                    <h2 class="category-name">Drinks</h2>
+                    <span class="cta-link">Check To Menu</span>
+                </div>
+            </a>
+
+            <!-- Cake -->
+            <a href="Cake.html" class="card">
+                <div class="image-container">
+                    <img src="https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=600&q=80"
+                         alt="Cake">
+                </div>
+
+                <div class="card-body">
+                    <h2 class="category-name">Cake</h2>
+                    <span class="cta-link">Check To Menu</span>
+                </div>
+            </a>
+        </main>
+    </div>
+</body>
+</html>

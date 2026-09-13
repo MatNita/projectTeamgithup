@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MainCours</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f7f5f1;
+            font-family: Arial, sans-serif;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 25px 40px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .card {
+            width: 18rem;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-body h4 {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 5px 0 10px;
+        }
+
+        .card-body p {
+            color: #555;
+            font-weight: 600;
+            margin: 0 0 15px;
+        }
+
+        .order-btn {
+            background: #6f452c;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .order-btn:hover {
+            background: #4e2f1d;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://www.southernliving.com/thmb/L-gmCs95kA6SkYJVtPmTZPs5DpA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/28284_GS_Burgers272-8af891887d074409a352ff7e304520f0.jpg" alt="Classic Burger">
+            <div class="card-body">
+                <h4>Classic Burger</h4>
+                <p>$18.00</p>
+                <button class="order-btn" onclick="addToOrder('Classic Burger', 18)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_4:3/k%2FPhoto%2FRecipes%2F2024-08-korean-fried-chicken%2F190-korean-fried-chicken-175" alt="Korean Fried Chicken">
+            <div class="card-body">
+                <h4>Korean Fried Chicken</h4>
+                <p>$30.00</p>
+                <button class="order-btn" onclick="addToOrder('Korean Fried Chicken', 30)"> Order </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://asianinspirations.com.au/wp-content/uploads/2024/11/One%20Pot%20Hainanese%20Chicken%20Rice%202.jpg" alt="Chicken Rice">
+            <div class="card-body">
+                <h4>Chicken Rice</h4>
+                <p>$10.00</p>
+                <button class="order-btn" onclick="addToOrder('Chicken Rice', 10)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.tasteofhome.com/wp-content/uploads/2024/09/Baked-Steak_EXPS_FT24_277371_EC_0905_5.jpg" alt="Beef Steak">
+            <div class="card-body">
+                <h4>Beef Steak</h4>
+                <p>$25.00</p>
+                <button class="order-btn" onclick="addToOrder('Beef Steak', 25)">Order</button>
+            </div>
+        </div>
+    </div>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://www.springermountainfarms.com/wp-content/uploads/2018/12/CreamyChickenPasta.png" alt="Creamy Chicken Pasta">
+            <div class="card-body">
+                <h4>Creamy Chicken Pasta</h4>
+                <p>$20.00</p>
+                <button class="order-btn" onclick="addToOrder('Creamy Chicken Pasta', 20)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://hips.hearstapps.com/hmg-prod/images/how-to-grill-salmon-recipe1-1655870645.jpg?crop=0.6666666666666667xw:1xh;center,top&resize=1200:*" alt="Grilled Salmon">
+            <div class="card-body">
+                <h4>Grilled Salmon</h4>
+                <p>$45.00</p>
+                <button class="order-btn" onclick="addToOrder('Grilled Salmon', 45)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://thecozycook.com/wp-content/uploads/2025/03/Baked-BBQ-Chicken-F.jpg" alt="BBQ Chicken">
+            <div class="card-body">
+                <h4>BBQ Chicken</h4>
+                <p>$24.00</p>
+                <button class="order-btn" onclick="addToOrder('BBQ Chicken', 24)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://static.wixstatic.com/media/597497_39dfa709d3d845eeaf43eb692e93b31b~mv2.jpg/v1/fill/w_6240,h_4160,al_c,q_90/Pepperoni%20Pizza_1_compressed.jpg" alt="Pepperoni Pizza">
+            <div class="card-body">
+                <h4>Pepperoni Pizza</h4>
+                <p>$22.00</p>
+                <button class="order-btn" onclick="addToOrder('Pepperoni Pizza', 22)"> Order</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let order = [];
+        function addToOrder(name, price) {
+            const existingItem = order.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                order.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem("order", JSON.stringify(order));
+            alert(name + " added to order!");
+        }
+    </script>
+</body>
+</html>

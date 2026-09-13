@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            padding: 15px;
+        }
+
+        .customer-container {
+            display: flex;
+            gap: 15px;
+            height: calc(100vh - 30px);
+        }
+
+        /* --- LEFT SIDE: FORM CONTROLS --- */
+        .form-section {
+            width: 300px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4a2f26;
+            border-bottom: 2px solid #4a2f26;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, 
+        .form-group select {
+            padding: 6px 8px;
+            font-size: 11px;
+            border: 1px solid #aaa;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus {
+            border-color: #4a2f26;
+        }
+
+        /* Action Buttons */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 0;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-add { background-color: #2e7d32; }
+        .btn-add:hover { background-color: #1b5e20; }
+
+        .btn-update { background-color: #0277bd; }
+        .btn-update:hover { background-color: #01579b; }
+
+        .btn-delete { background-color: #c62828; }
+        .btn-delete:hover { background-color: #8e0000; }
+
+        .btn-clear { background-color: #757575; }
+        .btn-clear:hover { background-color: #424242; }
+
+        /* --- RIGHT SIDE: TABLE & SEARCH --- */
+        .table-section {
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-bar label {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .search-bar input {
+            padding: 5px 8px;
+            font-size: 11px;
+            border: 1px solid #ccc;
+            width: 220px;
+        }
+
+        .table-container {
+            flex: 1;
+            background-color: #a0a0a0;
+            border: 1px solid #4a2f26;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th {
+            background-color: #4a2f26;
+            color: #ffffff;
+            text-align: left;
+            padding: 6px 8px;
+            font-weight: normal;
+            border-right: 1px solid #614035;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 6px 8px;
+            border-right: 1px solid #d0d0d0;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            background-color: #ffffff;
+        }
+
+        tr {
+            cursor: pointer;
+        }
+
+        tr.selected td {
+            background-color: #0078d7 !important;
+            color: #ffffff !important;
+        }
+
+        tr:hover:not(.selected) td {
+            background-color: #f1f1f1;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-vip { background-color: #fff8e1; color: #f57f17; }
+        .badge-regular { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-inactive { background-color: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+    <div class="customer-container">
+        
+        <!-- Customer Input Form -->
+        <div class="form-section">
+            <div class="section-title">Customer Details</div>
+
+            <div class="form-group">
+                <label for="custId">Customer ID</label>
+                <input type="text" id="custId" placeholder="id">
+            </div>
+
+            <div class="form-group">
+                <label for="custName">Full Name</label>
+                <input type="text" id="custName" placeholder="name">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" placeholder="phone">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="email">
+            </div>
+
+            <div class="form-group">
+                <label for="status">Membership Status</label>
+                <select id="status">
+                    <option value="Regular">Regular</option>
+                    <option value="VIP">VIP</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-add" onclick="addCustomer()">Add</button>
+                <button class="btn btn-update" onclick="updateCustomer()">Update</button>
+                <button class="btn btn-delete" onclick="deleteCustomer()">Delete</button>
+                <button class="btn btn-clear" onclick="clearForm()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Customer Table Display -->
+        <div class="table-section">
+            <div class="search-bar">
+                <label for="searchInput">Search Customer:</label>
+                <input type="text" id="searchInput" onkeyup="searchCustomers()" placeholder="Search by ID, Name, or Phone...">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Full Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Total Orders</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <script>
+    let customers = JSON.parse(localStorage.getItem('customers')) || [];
+    let selectedIndex = -1;
+
+    function saveCustomers() {
+        localStorage.setItem('customers', JSON.stringify(customers));
+    }
+
+    function getStatusBadge(status) {
+        if (status === 'VIP') {
+            return '<span class="badge badge-vip">VIP</span>';
+        }
+        if (status === 'Regular') {
+            return '<span class="badge badge-regular">Regular</span>';
+        }
+        return '<span class="badge badge-inactive">Inactive</span>';
+    }
+
+    function renderTable(data = customers) {
+        const tbody = document.getElementById('customerTableBody');
+        tbody.innerHTML = '';
+        data.forEach((cust, index) => {
+            const tr = document.createElement('tr');
+
+            if (index === selectedIndex) {
+                tr.classList.add('selected');
+            }
+
+            tr.innerHTML = `
+                <td>${cust.id}</td>
+                <td>${cust.name}</td>
+                <td>${cust.phone}</td>
+                <td>${cust.email}</td>
+                <td>${cust.totalOrders}</td>
+                <td>${getStatusBadge(cust.status)}</td>
+            `;
+
+            tr.addEventListener('click', () => selectRow(index));
+            tbody.appendChild(tr);
+        });
+    }
+
+    function selectRow(index) {
+        selectedIndex = index;
+
+        const cust = customers[index];
+
+        document.getElementById('custId').value = cust.id;
+        document.getElementById('custName').value = cust.name;
+        document.getElementById('phone').value = cust.phone;
+        document.getElementById('email').value = cust.email;
+        document.getElementById('status').value = cust.status;
+
+        renderTable();
+    }
+
+    function clearForm() {
+        selectedIndex = -1;
+        document.getElementById('custId').value = '';
+        document.getElementById('custName').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('status').value = 'Regular';
+
+        renderTable();
+    }
+
+    function addCustomer() {
+
+        const id = document.getElementById('custId').value.trim();
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const status = document.getElementById('status').value;
+
+        if (!id || !name) {
+            alert("Please fill in both Customer ID and Full Name.");
+            return;
+        }
+        // Check duplicate ID
+        const exists = customers.some(cust => cust.id === id);
+        if (exists) {
+            alert("Customer ID already exists.");
+            return;
+        }
+        // Add customer
+        customers.push({
+            id: id,
+            name: name,
+            phone: phone,
+            email: email,
+            totalOrders: 0,
+            status: status
+        });
+        saveCustomers();
+        alert("Customer added successfully!");
+        clearForm();
+    }
+    function updateCustomer() {
+        if (selectedIndex === -1) {
+            alert("Please select a customer row to update.");
+            return;
+        }
+        customers[selectedIndex] = {
+            id: document.getElementById('custId').value.trim(),
+            name: document.getElementById('custName').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            totalOrders: customers[selectedIndex].totalOrders,
+            status: document.getElementById('status').value
+        };
+        // Save updated data
+        saveCustomers();
+        alert("Customer updated successfully!");
+        clearForm();
+    }
+    function deleteCustomer() {
+        if (selectedIndex === -1) {
+            alert("Please select a customer to delete.");
+            return;
+        }
+        if (confirm("Are you sure you want to delete this customer record?")) {
+            customers.splice(selectedIndex, 1);
+            saveCustomers();
+            alert("Customer deleted successfully!");
+            clearForm();
+        }
+    }
+    function searchCustomers() {
+        const query = document
+            .getElementById('searchInput')
+            .value
+            .toLowerCase();
+        const filtered = customers.filter(cust =>
+            cust.id.toLowerCase().includes(query) ||
+            cust.name.toLowerCase().includes(query) ||
+            cust.phone.toLowerCase().includes(query)
+        );
+        renderTable(filtered);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+    });
+</script>
+</body>
+</html>

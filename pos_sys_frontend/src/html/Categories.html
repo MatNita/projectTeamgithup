@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            padding: 15px;
+        }
+
+        .categories-container {
+            display: flex;
+            gap: 15px;
+            height: calc(100vh - 30px);
+        }
+
+        /* --- LEFT SIDE: FORM CONTROLS --- */
+        .form-section {
+            width: 300px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4a2f26;
+            border-bottom: 2px solid #4a2f26;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            padding: 6px 8px;
+            font-size: 11px;
+            border: 1px solid #aaa;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 60px;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            border-color: #4a2f26;
+        }
+
+        /* Action Buttons */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 0;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-add { background-color: #2e7d32; }
+        .btn-add:hover { background-color: #1b5e20; }
+
+        .btn-update { background-color: #0277bd; }
+        .btn-update:hover { background-color: #01579b; }
+
+        .btn-delete { background-color: #c62828; }
+        .btn-delete:hover { background-color: #8e0000; }
+
+        .btn-clear { background-color: #757575; }
+        .btn-clear:hover { background-color: #424242; }
+
+        /* --- RIGHT SIDE: TABLE & SEARCH --- */
+        .table-section {
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-bar label {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .search-bar input {
+            padding: 5px 8px;
+            font-size: 11px;
+            border: 1px solid #ccc;
+            width: 220px;
+        }
+
+        .table-container {
+            flex: 1;
+            background-color: #a0a0a0;
+            border: 1px solid #4a2f26;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th {
+            background-color: #4a2f26;
+            color: #ffffff;
+            text-align: left;
+            padding: 6px 8px;
+            font-weight: normal;
+            border-right: 1px solid #614035;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 6px 8px;
+            border-right: 1px solid #d0d0d0;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            background-color: #ffffff;
+        }
+
+        tr {
+            cursor: pointer;
+        }
+
+        tr.selected td {
+            background-color: #0078d7 !important;
+            color: #ffffff !important;
+        }
+
+        tr:hover:not(.selected) td {
+            background-color: #f1f1f1;
+        }
+
+        /* Status Badge */
+        .badge {
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-active { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-inactive { background-color: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+    <div class="categories-container">
+        <!-- Category Input Form -->
+        <div class="form-section">
+            <div class="section-title">Category Details</div>
+
+            <div class="form-group">
+                <label for="catId">Category ID</label>
+                <input type="text" id="catId" placeholder="id">
+            </div>
+
+            <div class="form-group">
+                <label for="catName">Category Name</label>
+                <input type="text" id="catName" placeholder="category name">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" placeholder="Brief summary of category items..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-add" onclick="addCategory()">Add</button>
+                <button class="btn btn-update" onclick="updateCategory()">Update</button>
+                <button class="btn btn-delete" onclick="deleteCategory()">Delete</button>
+                <button class="btn btn-clear" onclick="clearForm()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Category Table Display -->
+        <div class="table-section">
+            <div class="search-bar">
+                <label for="searchInput">Search Category:</label>
+                <input type="text" id="searchInput" onkeyup="searchCategories()" placeholder="Search by ID or Name...">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Total Items</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Sample Category Data
+        let categories = JSON.parse(localStorage.getItem('categories')) || [];
+        let selectedIndex = -1;
+
+        function saveCategories() {
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+
+        function getStatusBadge(status) {
+            if (status === 'Active') return '<span class="badge badge-active">Active</span>';
+            return '<span class="badge badge-inactive">Inactive</span>';
+        }
+
+        function renderTable(data = categories) {
+            const tbody = document.getElementById('categoryTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((cat, index) => {
+                const tr = document.createElement('tr');
+                if (index === selectedIndex) tr.classList.add('selected');
+
+                tr.innerHTML = `
+                    <td>${cat.id}</td>
+                    <td>${cat.name}</td>
+                    <td>${cat.description}</td>
+                    <td>${cat.totalItems}</td>
+                    <td>${getStatusBadge(cat.status)}</td>
+                `;
+
+                tr.addEventListener('click', () => selectRow(index));
+                tbody.appendChild(tr);
+            });
+        }
+
+        function selectRow(index) {
+            selectedIndex = index;
+            const cat = categories[index];
+
+            document.getElementById('catId').value = cat.id;
+            document.getElementById('catName').value = cat.name;
+            document.getElementById('description').value = cat.description;
+            document.getElementById('status').value = cat.status;
+
+            renderTable();
+        }
+
+        function clearForm() {
+            selectedIndex = -1;
+            document.getElementById('catId').value = '';
+            document.getElementById('catName').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('status').value = 'Active';
+            renderTable();
+        }
+
+        function addCategory() {
+            const id = document.getElementById('catId').value.trim();
+            const name = document.getElementById('catName').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const status = document.getElementById('status').value;
+
+            if (!id || !name) {
+                alert("Please fill in both Category ID and Name.");
+                return;
+            }
+            const exists = categories.some(cust => cust.id === id);
+            if (exists) {
+                alert("Categories ID already exists.");
+                return;
+            }
+            // Add customer
+            categories.push({
+                id: id,
+                name: name,
+                description: description,
+                status: status
+            });
+            saveCategories();
+            alert("Categories added successfully!");
+            clearForm();
+        }
+
+        function updateCategory() {
+            if (selectedIndex === -1) {
+                alert("Please select a category row to update.");
+                return;
+            }
+
+            categories[selectedIndex] = {
+                id: document.getElementById('catId').value.trim(),
+                name: document.getElementById('catName').value.trim(),
+                description: document.getElementById('description').value.trim(),
+                status: document.getElementById('status').value
+            };
+            saveCategories();
+            alert("Categories updated successfully");
+            clearForm();
+        }
+
+        function deleteCategory() {
+            if (selectedIndex === -1) {
+                alert("Please select a category to delete.");
+                return;
+            }
+
+            if (confirm("Are you sure you want to delete this category?")) {
+                categories.splice(selectedIndex, 1);
+                saveCategories();
+                alert("Categories deleted successfully");
+                clearForm();
+            }
+        }
+
+        function searchCategories() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = categories.filter(cat => 
+                cat.id.toLowerCase().includes(query) || 
+                cat.name.toLowerCase().includes(query) ||
+                cat.description.toLowerCase().includes(query)
+            );
+            renderTable(filtered);
+        }
+        document.addEventListener('DOMContentLoaded', () => renderTable());
+    </script>
+</body>
+</html>

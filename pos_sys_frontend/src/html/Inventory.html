@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            padding: 15px;
+        }
+
+        .inventory-container {
+            display: flex;
+            gap: 15px;
+            height: calc(100vh - 30px);
+        }
+
+        /* --- LEFT SIDE: FORM / CONTROLS --- */
+        .form-section {
+            width: 300px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #4a2f26;
+            border-bottom: 2px solid #4a2f26;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            padding: 6px 8px;
+            font-size: 11px;
+            border: 1px solid #aaa;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #4a2f26;
+        }
+
+        /* Action Buttons */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 8px 0;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-add { background-color: #2e7d32; }
+        .btn-add:hover { background-color: #1b5e20; }
+
+        .btn-update { background-color: #0277bd; }
+        .btn-update:hover { background-color: #01579b; }
+
+        .btn-delete { background-color: #c62828; }
+        .btn-delete:hover { background-color: #8e0000; }
+
+        .btn-clear { background-color: #757575; }
+        .btn-clear:hover { background-color: #424242; }
+
+        /* --- RIGHT SIDE: TABLE & SEARCH --- */
+        .table-section {
+            flex: 1;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-bar label {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .search-bar input {
+            padding: 5px 8px;
+            font-size: 11px;
+            border: 1px solid #ccc;
+            width: 220px;
+        }
+
+        .table-container {
+            flex: 1;
+            background-color: #a0a0a0;
+            border: 1px solid #4a2f26;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th {
+            background-color: #4a2f26;
+            color: #ffffff;
+            text-align: left;
+            padding: 6px 8px;
+            font-weight: normal;
+            border-right: 1px solid #614035;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 6px 8px;
+            border-right: 1px solid #d0d0d0;
+            border-bottom: 1px solid #eee;
+            color: #333;
+            background-color: #ffffff;
+        }
+
+        tr {
+            cursor: pointer;
+        }
+
+        tr.selected td {
+            background-color: #0078d7 !important;
+            color: #ffffff !important;
+        }
+
+        tr:hover:not(.selected) td {
+            background-color: #f1f1f1;
+        }
+
+        /* Status Tags */
+        .badge {
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-in-stock { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-low-stock { background-color: #fffde7; color: #f57f17; }
+        .badge-out-of-stock { background-color: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+    <div class="inventory-container">
+        
+        <!-- Form Area -->
+        <div class="form-section">
+            <div class="section-title">Item Details</div>
+
+            <input type="hidden" id="itemIndex">
+
+            <div class="form-group">
+                <label for="prodId">Product ID</label>
+                <input type="text" id="prodId" placeholder="e.g., PRD-001">
+            </div>
+
+            <div class="form-group">
+                <label for="prodName">Product Name</label>
+                <input type="text" id="prodName" placeholder="e.g., Beef Burger">
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category">
+                    <option value="Main Course">Main Course</option>
+                    <option value="Beverages">Beverages</option>
+                    <option value="Desserts">Desserts</option>
+                    <option value="Appetizers">Appetizers</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity in Stock</label>
+                <input type="number" id="quantity" min="0" placeholder="0">
+            </div>
+
+            <div class="form-group">
+                <label for="price">Unit Price ($)</label>
+                <input type="number" id="price" step="0.01" min="0" placeholder="0.00">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-add" onclick="addItem()">Add Item</button>
+                <button class="btn btn-update" onclick="updateItem()">Update</button>
+                <button class="btn btn-delete" onclick="deleteItem()">Delete</button>
+                <button class="btn btn-clear" onclick="clearForm()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Table & Search Area -->
+        <div class="table-section">
+            <div class="search-bar">
+                <label for="searchInput">Search Inventory:</label>
+                <input type="text" id="searchInput" onkeyup="searchInventory()" placeholder="Search by ID or Name...">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Price ($)</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Sample Inventory Data
+        let inventory = [
+            { id: "PRD-001", name: "Classic Burger", category: "Main Course", quantity: 25, price: 5.50 },
+            { id: "PRD-002", name: "Iced Milk Tea", category: "Beverages", quantity: 40, price: 2.50 },
+            { id: "PRD-003", name: "French Fries", category: "Appetizers", quantity: 8, price: 3.00 },
+            { id: "PRD-004", name: "Fried Chicken", category: "Main Course", quantity: 15, price: 6.00 },
+            { id: "PRD-005", name: "Chocolate Cake", category: "Desserts", quantity: 0, price: 4.00 }
+        ];
+
+        let selectedIndex = -1;
+
+        function getStatusBadge(qty) {
+            if (qty > 10) return '<span class="badge badge-in-stock">In Stock</span>';
+            if (qty > 0) return '<span class="badge badge-low-stock">Low Stock</span>';
+            return '<span class="badge badge-out-of-stock">Out of Stock</span>';
+        }
+
+        function renderTable(data = inventory) {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                if (index === selectedIndex) tr.classList.add('selected');
+
+                tr.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${parseFloat(item.price).toFixed(2)}</td>
+                    <td>${getStatusBadge(item.quantity)}</td>
+                `;
+
+                tr.addEventListener('click', () => selectRow(index));
+                tbody.appendChild(tr);
+            });
+        }
+
+        function selectRow(index) {
+            selectedIndex = index;
+            const item = inventory[index];
+            
+            document.getElementById('itemIndex').value = index;
+            document.getElementById('prodId').value = item.id;
+            document.getElementById('prodName').value = item.name;
+            document.getElementById('category').value = item.category;
+            document.getElementById('quantity').value = item.quantity;
+            document.getElementById('price').value = item.price;
+
+            renderTable();
+        }
+
+        function clearForm() {
+            selectedIndex = -1;
+            document.getElementById('itemIndex').value = '';
+            document.getElementById('prodId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('category').value = 'Main Course';
+            document.getElementById('quantity').value = '';
+            document.getElementById('price').value = '';
+            renderTable();
+        }
+
+        function addItem() {
+            const id = document.getElementById('prodId').value.trim();
+            const name = document.getElementById('prodName').value.trim();
+            const category = document.getElementById('category').value;
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const price = parseFloat(document.getElementById('price').value) || 0.0;
+
+            if (!id || !name) {
+                alert("Please fill in both Product ID and Product Name.");
+                return;
+            }
+
+            inventory.push({ id, name, category, quantity, price });
+            clearForm();
+        }
+
+        function updateItem() {
+            if (selectedIndex === -1) {
+                alert("Please select an item from the table to update.");
+                return;
+            }
+
+            inventory[selectedIndex] = {
+                id: document.getElementById('prodId').value.trim(),
+                name: document.getElementById('prodName').value.trim(),
+                category: document.getElementById('category').value,
+                quantity: parseInt(document.getElementById('quantity').value) || 0,
+                price: parseFloat(document.getElementById('price').value) || 0.0
+            };
+
+            clearForm();
+        }
+
+        function deleteItem() {
+            if (selectedIndex === -1) {
+                alert("Please select an item to delete.");
+                return;
+            }
+
+            if (confirm("Are you sure you want to delete this inventory item?")) {
+                inventory.splice(selectedIndex, 1);
+                clearForm();
+            }
+        }
+
+        function searchInventory() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = inventory.filter(item => 
+                item.id.toLowerCase().includes(query) || 
+                item.name.toLowerCase().includes(query) ||
+                item.category.toLowerCase().includes(query)
+            );
+            renderTable(filtered);
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => renderTable());
+    </script>
+</body>
+</html>

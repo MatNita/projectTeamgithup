@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drink</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f7f5f1;
+            font-family: Arial, sans-serif;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 25px 40px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .card {
+            width: 18rem;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-body h4 {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 5px 0 10px;
+        }
+
+        .card-body p {
+            color: #555;
+            font-weight: 600;
+            margin: 0 0 15px;
+        }
+
+        .order-btn {
+            background: #6f452c;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .order-btn:hover {
+            background: #4e2f1d;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://carmyy.com/wp-content/uploads/2021/08/Cold-Brew-Hojicha-Milk-Tea-9-683x1024.jpg" alt="Iced Milk Tea">
+            <div class="card-body">
+                <h4>Iced Milk Tea</h4>
+                <p>$5.00</p>
+                <button class="order-btn" onclick="addToOrder('Iced Milk Tea', 5)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBcHUlLcddYfyi9XXLvBikWNPYbTFubwFYS0BDvF07Ljqmlytp5ee7xho&s=10" alt="Hot Coffee">
+            <div class="card-body">
+                <h4>Hot Coffee</h4>
+                <p>$8.00</p>
+                <button class="order-btn" onclick="addToOrder('Hot Coffee', 8)">Order </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://greenletes.com/wp-content/uploads/2018/05/orange-juice-1024x1024.png" alt="Orange Juice">
+            <div class="card-body">
+                <h4>Orange Juice</h4>
+                <p>$11.00</p>
+                <button class="order-btn" onclick="addToOrder('Orange Juice', 11)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://shisha.co.id/wp-content/uploads/2023/09/cocacola-370x351.jpg.webp" alt="Coca-Cola">
+            <div class="card-body">
+                <h4>Coca-Cola</h4>
+                <p>$4.00</p>
+                <button class="order-btn" onclick="addToOrder('Coca-Cola', 4)">Order</button>
+            </div>
+        </div>
+    </div>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://www.acozykitchen.com/wp-content/uploads/2017/04/IcedMatchaLatte-1.jpg" alt="Matcha Latte">
+            <div class="card-body">
+                <h4>Matcha Latte</h4>
+                <p>$6.00</p>
+                <button class="order-btn" onclick="addToOrder('Matcha Latte', 6)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.acouplecooks.com/wp-content/uploads/2022/03/Lemon-Iced-Tea-001s.jpg" alt="Iced Lemon Tea">
+            <div class="card-body">
+                <h4>Iced Lemon Tea</h4>
+                <p>$9.00</p>
+                <button class="order-btn" onclick="addToOrder('Iced Lemon Tea', 9)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://feastandwest.com/wp-content/uploads/2023/04/italian-soda-image.jpg" alt="Italian Soda">
+            <div class="card-body">
+                <h4>Italian Soda</h4>
+                <p>$11.00</p>
+                <button class="order-btn" onclick="addToOrder('Italian Soda', 11)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmku4N4vGfkRqLm7ZC5n5V2Vs42W_pQIYq8dQ4ofwMfw&s=10" alt="Dragon Fruit Mocktail">
+            <div class="card-body">
+                <h4>Dragon Fruit Mocktail</h4>
+                <p>$8.00</p>
+                <button class="order-btn" onclick="addToOrder('Dragon Fruit Mocktail', 8)">Order</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let order = [];
+        function addToOrder(name, price) {
+            const existingItem = order.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                order.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem("order", JSON.stringify(order));
+            alert(name + " added to order!");
+        }
+    </script>
+</body>
+</html>

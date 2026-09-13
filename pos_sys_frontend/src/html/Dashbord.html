@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        /* --- TOP STATS CARDS GRID --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: #4a2f26;
+            color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        .card-info .number {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .card-info .label {
+            font-size: 11px;
+            color: #cccccc;
+        }
+
+        /* --- SALES TABLE SECTION --- */
+        .sales-section {
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #ccc;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: normal;
+            color: #333333;
+            margin-bottom: 10px;
+        }
+
+        .table-container {
+            width: 100%;
+            height: 380px;
+            background-color: #a0a0a0; /* Grey background matching image */
+            border: 1px solid #4a2f26;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th {
+            background-color: #4a2f26;
+            color: #ffffff;
+            text-align: left;
+            padding: 6px 8px;
+            font-weight: normal;
+            border-right: 1px solid #614035;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 6px 8px;
+            border-right: 1px solid #d0d0d0;
+            color: #333;
+            background-color: #ffffff;
+        }
+
+        tr {
+            cursor: pointer;
+        }
+
+        tr.selected td {
+            background-color: #0078d7 !important;
+            color: #ffffff !important;
+        }
+
+        tr:hover:not(.selected) td {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Summary Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="card-icon">👥</div>
+            <div class="card-info">
+                <div class="number" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="card-icon">📦</div>
+            <div class="card-info">
+                <div class="number" id="totalProducts">0</div>
+                <div class="label">Total Products</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="card-icon">💵</div>
+            <div class="card-info">
+                <div class="number" id="todayRevenue">$0.00</div>
+                <div class="label">Today's Revenue</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="card-icon">💰</div>
+            <div class="card-info">
+                <div class="number" id="totalRevenue">$0.00</div>
+                <div class="label">Total Revenue</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Sales Table -->
+    <div class="sales-section">
+        <div class="section-title">Today's Sales</div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>customerId</th>
+                        <th>productsIds</th>
+                        <th>quantities</th>
+                        <th>prices</th>
+                        <th>totalPrice</th>
+                        <th>dateOrder</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                    <!-- Dynamic Data Rows Populated via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Data Store
+        const systemStats = {
+            totalUsers: 3,
+            totalProducts: 6,
+            totalRevenue: 295.00
+        };
+
+        const salesData = [
+            { id: 2, customerId: 'CID-2', productsIds: '4,5', quantities: '2,1', prices: '24.00,2.00', totalPrice: 26.00, dateOrder: '01-28-2025' },
+            { id: 3, customerId: 'CID-3', productsIds: '4,5', quantities: '2,3', prices: '24.00,6.00', totalPrice: 30.00, dateOrder: '01-28-2025' },
+            { id: 4, customerId: 'CID-4', productsIds: '4,5', quantities: '1,2', prices: '12.00,4.00', totalPrice: 16.00, dateOrder: '01-28-2025' },
+            { id: 5, customerId: 'CID-5', productsIds: '4,5', quantities: '2,5', prices: '24.00,10.00', totalPrice: 34.00, dateOrder: '01-28-2025' },
+            { id: 6, customerId: 'CID-6', productsIds: '7,4,5,6', quantities: '3,4,5,6', prices: '45.00,48.00,10.00,60.00', totalPrice: 163.00, dateOrder: '01-28-2025' }
+        ];
+
+        // Render Sales Rows into HTML Table
+        function renderSalesTable() {
+            const tableBody = document.getElementById('salesTableBody');
+            tableBody.innerHTML = '';
+
+            let todayRevenueCalc = 0;
+
+            salesData.forEach((row, index) => {
+                todayRevenueCalc += row.totalPrice;
+
+                const tr = document.createElement('tr');
+                if (index === 0) tr.classList.add('selected'); // Highlight first row by default
+
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.customerId}</td>
+                    <td>${row.productsIds}</td>
+                    <td>${row.quantities}</td>
+                    <td>${row.prices}</td>
+                    <td>${row.totalPrice.toFixed(2)}</td>
+                    <td>${row.dateOrder}</td>
+                `;
+
+                // Add row click listener to select row
+                tr.addEventListener('click', function() {
+                    document.querySelectorAll('#salesTableBody tr').forEach(r => r.classList.remove('selected'));
+                    tr.classList.add('selected');
+                });
+
+                tableBody.appendChild(tr);
+            });
+
+            // Update Top Cards Dynamically
+            document.getElementById('totalUsers').textContent = systemStats.totalUsers;
+            document.getElementById('totalProducts').textContent = systemStats.totalProducts;
+            document.getElementById('todayRevenue').textContent = `$${todayRevenueCalc.toFixed(2)}`;
+            document.getElementById('totalRevenue').textContent = `$${systemStats.totalRevenue.toFixed(2)}`;
+        }
+
+        // Run rendering on page load
+        document.addEventListener('DOMContentLoaded', renderSalesTable);
+    </script>
+</body>
+</html>

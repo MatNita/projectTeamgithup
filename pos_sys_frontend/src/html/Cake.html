@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cake</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #f7f5f1;
+            font-family: Arial, sans-serif;
+        }
+
+        .product-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 25px;
+            padding: 25px 40px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .card {
+            width: 18rem;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex: 0 0 auto;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .card-body h4 {
+            font-size: 1.1rem;
+            color: #222;
+            margin: 5px 0 10px;
+        }
+
+        .card-body p {
+            color: #555;
+            font-weight: 600;
+            margin: 0 0 15px;
+        }
+
+        .order-btn {
+            background: #6f452c;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .order-btn:hover {
+            background: #4e2f1d;
+        }
+    </style>
+</head>
+<body>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://thefirstyearblog.com/wp-content/uploads/2024/03/Banana-Cake-Square-2024.png" alt="Banana cake">
+            <div class="card-body">
+                <h4>Banana cake</h4>
+                <p>$8.00</p>
+                <button class="order-btn" onclick="addToOrder('Banana cake', 8)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://sallysbakingaddiction.com/wp-content/uploads/2015/09/snickers-cupcakes-3.jpg" alt="Cup cake">
+            <div class="card-body">
+                <h4>Cup cake</h4>
+                <p>$5.50</p>
+                <button class="order-btn" onclick="addToOrder('Cup cake', 5.50)">Order </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.littlecurlykitchen.com/wp-content/uploads/2016/04/fullsizeoutput_5f66.jpeg" alt="Donut">
+            <div class="card-body">
+                <h4>Donut</h4>
+                <p>$12.00</p>
+                <button class="order-btn" onclick="addToOrder('Donut', 12)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.simplejoy.com/wp-content/uploads/2021/04/Croissant-French-Toast-5.jpg" alt="Croissant">
+            <div class="card-body">
+                <h4>Croissant</h4>
+                <p>$4.50</p>
+                <button class="order-btn" onclick="addToOrder('Croissant', 4.50)">Order</button>
+            </div>
+        </div>
+    </div>
+    <div class="product-row">
+        <div class="card">
+            <img src="https://bakewithshivesh.com/wp-content/uploads/2017/09/21-750x617.jpg" alt="Cookies">
+            <div class="card-body">
+                <h4>Cookies</h4>
+                <p>$6.00</p>
+                <button class="order-btn" onclick="addToOrder('Cookies', 6)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://www.abakingjourney.com/wp-content/uploads/2022/04/Mini-Fruit-Tarts-Feature.jpg" alt="Fruit Tart">
+            <div class="card-body">
+                <h4>Fruit Tart</h4>
+                <p>$5.00</p>
+                <button class="order-btn" onclick="addToOrder('Fruit Tart', 5)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://thecookingfoodie.com/wp-content/uploads/2026/04/Baked-lemon-cheesecake.jpg" alt="Cheesecakey">
+            <div class="card-body">
+                <h4>Cheesecake</h4>
+                <p>$13.00</p>
+                <button class="order-btn" onclick="addToOrder('Cheesecake', 13)">Order</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="https://bakingthegoods.com/wp-content/uploads/2024/10/Mocha-Almond-Fudge-Cookies-43.jpg" alt="Brownies">
+            <div class="card-body">
+                <h4>Brownies</h4>
+                <p>$10.00</p>
+                <button class="order-btn" onclick="addToOrder('Brownies', 10)">Order</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let order = [];
+        function addToOrder(name, price) {
+            const existingItem = order.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                order.push({
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem("order", JSON.stringify(order));
+            alert(name + " added to order!");
+        }
+    </script>
+</body>
+</html>
