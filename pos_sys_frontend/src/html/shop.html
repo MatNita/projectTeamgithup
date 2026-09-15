@@ -3,257 +3,618 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu - PART-FOWL</title>
-
+    <title>Shop - Restaurant Management System</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
         }
-
         body {
-            background-color: #f7f7f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
+            background: #f5f5f5;
+            padding: 30px;
         }
-
         .container {
-            width: 100%;
-            max-width: 900px;
-            background-color: #ffffff;
-            padding: 40px 30px;
-            border-radius: 4px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            max-width: 1200px;
+            margin: auto;
         }
-
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
-
-        .sub-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #222222;
-            text-transform: uppercase;
-            margin-bottom: 5px;
+        .header h1 {
+            color: #333;
         }
-
-        .main-title {
-            font-size: 2.2rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: #000000;
-            text-transform: uppercase;
-            margin-bottom: 8px;
+        .order-button {
+            background: #ff7a00;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
         }
-
-        .description {
-            font-size: 0.75rem;
-            color: #666666;
-            font-style: italic;
+        .order-button:hover {
+            background: #e66d00;
         }
-
-        /* Grid */
-        .menu-grid {
+        .category-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+            gap: 20px;
         }
-
-        /* Card */
-        .card {
-            background-color: #ffffff;
-            border-radius: 2px;
+        .category-card {
+            background: white;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-
-            /* Remove underline from link */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             text-decoration: none;
-            color: inherit;
+            color: #333;
+            transition: 0.3s;
         }
-
-        .card:hover {
+        .category-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
-
-        /* Image */
-        .image-container {
+        .category-card img {
             width: 100%;
-            height: 180px;
-            overflow: hidden;
-        }
-
-        .image-container img {
-            width: 100%;
-            height: 100%;
+            height: 200px;
             object-fit: cover;
+        }
+        .category-info {
+            padding: 15px;
+            text-align: center;
+        }
+        .category-info h3 {
+            margin-bottom: 5px;
+        }
+        .category-info p {
+            color: #777;
+        }
+        #orderSection {
+            display: none;
+            background: white;
+            margin-top: 40px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .order-title {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .customer-box {
+            margin-bottom: 25px;
+        }
+        .customer-box label {
             display: block;
-            transition: transform 0.3s ease;
+            margin-bottom: 8px;
+            font-weight: bold;
         }
-
-        .card:hover .image-container img {
-            transform: scale(1.05);
+        .customer-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
         }
-
-        /* Card Body */
-        .card-body {
-            padding: 20px 15px;
+        .order-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            min-height: 90px;
+            gap: 20px;
         }
-
-        .category-name {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #111111;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            line-height: 1.2;
+        .order-item-info {
+            flex: 1;
         }
-
-        .cta-link {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: #111111;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            text-decoration: none;
-            transition: color 0.2s ease;
+        .order-item-name {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-
-        .card:hover .cta-link {
-            color: #e63946;
+        .order-item-price {
+            color: #777;
         }
-
-        /* Responsive */
+        .quantity-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #eee;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .quantity-btn:hover {
+            background: #ddd;
+        }
+        .quantity {
+            min-width: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            background: #bb2d3b;
+        }
+        .empty-order {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+        #summary {
+            margin-top: 25px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .total-row {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .checkout-btn {
+            flex: 1;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 13px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .checkout-btn:hover {
+            background: #218838;
+        }
+        .clear-btn:hover {
+            background: #bb2d3b;
+        }
         @media (max-width: 768px) {
-            .menu-grid {
+            .category-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
+            }
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
-
-        @media (max-width: 480px) {
-            .menu-grid {
+        @media (max-width: 500px) {
+            body {
+                padding: 15px;
+            }
+            .category-grid {
                 grid-template-columns: 1fr;
             }
-
-            .container {
-                padding: 25px 15px;
+            .header {
+                flex-direction: column;
+                gap: 15px;
             }
         }
     </style>
 </head>
-
 <body>
-
-    <div class="container">
-
-        <header>
-            <div class="sub-title">Menu</div>
-            <h1 class="main-title">PART-FOWL</h1>
-        </header>
-
-        <main class="menu-grid">
-
-            <!-- Main Courses -->
-            <a href="MainCourse.html" class="card">
-                <div class="image-container">
-                    <img src="https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=600&q=80"
-                         alt="Main Courses">
-                </div>
-
-                <div class="card-body">
-                    <h2 class="category-name">Main Courses</h2>
-                    <span class="cta-link">Check To Menu</span>
-                </div>
-            </a>
-
-
-            <!-- Soups -->
-            <a href="Soup.html" class="card">
-                <div class="image-container">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbPzGBP5Cu79XWVpIy1_m2-NhPM9SsfHFuxgHobj7imA&s=10"
-                         alt="Soups">
-                </div>
-
-                <div class="card-body">
-                    <h2 class="category-name">Soups</h2>
-                    <span class="cta-link">Check To Menu</span>
-                </div>
-            </a>
-
-
-            <!-- Salads -->
-            <a href="Salads.html" class="card">
-                <div class="image-container">
-                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80"
-                         alt="Salads">
-                </div>
-
-                <div class="card-body">
-                    <h2 class="category-name">Salads</h2>
-                    <span class="cta-link">Check To Menu</span>
-                </div>
-            </a>
-
-            <!-- Desserts -->
-            <a href="Dessert.html" class="card">
-                <div class="image-container">
-                    <img src="https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?auto=format&fit=crop&w=600&q=80"
-                         alt="Desserts">
-                </div>
-
-                <div class="card-body">
-                    <h2 class="category-name">Desserts</h2>
-                    <span class="cta-link">Check To Menu</span>
-                </div>
-            </a>
-
-            <!-- Drinks -->
-            <a href="Drink.html" class="card">
-                <div class="image-container">
-                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80"
-                         alt="Drinks">
-                </div>
-
-                <div class="card-body">
-                    <h2 class="category-name">Drinks</h2>
-                    <span class="cta-link">Check To Menu</span>
-                </div>
-            </a>
-
-            <!-- Cake -->
-            <a href="Cake.html" class="card">
-                <div class="image-container">
-                    <img src="https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&w=600&q=80"
-                         alt="Cake">
-                </div>
-
-                <div class="card-body">
-                    <h2 class="category-name">Cake</h2>
-                    <span class="cta-link">Check To Menu</span>
-                </div>
-            </a>
-        </main>
+<div class="container">
+    <div class="header">
+        <h1>🍽️ Restaurant Shop</h1>
+        <button class="order-button" onclick="showOrder()">
+            🛒 Your Order
+            <span id="orderCount">0</span>
+        </button>
     </div>
+    <div class="category-grid">
+        <a href="MainCourse.html" class="category-card">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836"
+                 alt="Main Course">
+            <div class="category-info">
+                <h3>Main Course</h3>
+                <p>Delicious main dishes</p>
+            </div>
+        </a>
+        <a href="Soup.html" class="category-card">
+            <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd"
+                 alt="Soup">
+            <div class="category-info">
+                <h3>Soup</h3>
+                <p>Fresh and hot soups</p>
+            </div>
+        </a>
+        <a href="Salads.html" class="category-card">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
+                 alt="Salads">
+            <div class="category-info">
+                <h3>Salads</h3>
+                <p>Fresh healthy salads</p>
+            </div>
+        </a>
+        <a href="Dessert.html" class="category-card">
+            <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307"
+                 alt="Dessert">
+            <div class="category-info">
+                <h3>Dessert</h3>
+                <p>Sweet desserts</p>
+            </div>
+        </a>
+        <a href="Drink.html" class="category-card">
+            <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e"
+                 alt="Drink">
+            <div class="category-info">
+                <h3>Drink</h3>
+                <p>Cold and hot drinks</p>
+            </div>
+        </a>
+        <a href="Cake.html" class="category-card">
+            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587"
+                 alt="Cake">
+            <div class="category-info">
+                <h3>Cake</h3>
+                <p>Fresh cakes and bakery</p>
+            </div>
+        </a>
+    </div>
+    <section id="orderSection">
+        <h2 class="order-title"> 🛒 Your Order </h2>
+        <div class="customer-box">
+            <label for="customerSelect"> Customer </label>
+            <select id="customerSelect" class="customer-select">
+                <option value="">Select Customer </option>
+            </select>
+        </div>
+        <div id="orderList"></div>
+        <div id="summary"></div>
+    </section>
+</div>
+<script>
+    let order = JSON.parse(localStorage.getItem("order")) || [];
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    function saveOrder() {
+        localStorage.setItem("order",JSON.stringify(order));
+    }
+    function updateOrderCount() {
+        let totalItems = order.reduce(
+            (total, item) => total + Number(item.quantity),
+            0
+        );
+        document.getElementById("orderCount").textContent =
+            totalItems;
+    }
+
+
+    // ================================
+    // SHOW ORDER
+    // ================================
+
+    function showOrder() {
+
+        // Reload latest order
+        order =
+            JSON.parse(localStorage.getItem("order")) || [];
+
+        customers =
+            JSON.parse(localStorage.getItem("customers")) || [];
+
+
+        const section =
+            document.getElementById("orderSection");
+
+
+        section.style.display = "block";
+
+
+        displayCustomers();
+
+        displayOrder();
+
+        updateOrderCount();
+
+
+        section.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+
+
+    // ================================
+    // DISPLAY CUSTOMERS
+    // ================================
+
+    function displayCustomers() {
+
+        const select =
+            document.getElementById("customerSelect");
+
+
+        select.innerHTML =
+            '<option value="">Select Customer</option>';
+
+
+        if (customers.length === 0) {
+
+            select.innerHTML +=
+                '<option value="">No customers available</option>';
+
+            return;
+        }
+
+
+        customers.forEach((customer, index) => {
+
+            const option =
+                document.createElement("option");
+
+
+            option.value = index;
+
+
+            option.textContent =
+                customer.name ||
+                customer.customerName ||
+                "Customer " + (index + 1);
+
+
+            select.appendChild(option);
+
+        });
+
+    }
+
+
+    // ================================
+    // DISPLAY ORDER
+    // ================================
+
+    function displayOrder() {
+
+        const orderList =
+            document.getElementById("orderList");
+
+
+        const summary =
+            document.getElementById("summary");
+
+
+        orderList.innerHTML = "";
+
+
+        if (order.length === 0) {
+
+            orderList.innerHTML = `
+                <div class="empty-order">
+                    <h3>Your order is empty 🛒</h3>
+                    <p>Please choose food from the menu.</p>
+                </div>
+            `;
+
+
+            summary.innerHTML = "";
+
+            return;
+        }
+
+
+        let totalItems = 0;
+
+        let subtotal = 0;
+
+
+        order.forEach((item, index) => {
+
+            const price =
+                Number(item.price) || 0;
+
+            const quantity =
+                Number(item.quantity) || 1;
+
+
+            const itemTotal =
+                price * quantity;
+
+
+            totalItems += quantity;
+
+            subtotal += itemTotal;
+
+
+            orderList.innerHTML += `
+
+                <div class="order-item">
+
+                    <div class="order-item-info">
+
+                        <div class="order-item-name">
+                            ${item.name}
+                        </div>
+                        <div class="order-item-price">$${price.toFixed(2)}x${quantity}
+                        </div>
+
+                    </div>
+                    <div class="quantity-box">
+                        <button class="quantity-btn" onclick="changeQuantity(${index}, -1)">-</button>
+                        <span class="quantity"> ${quantity}</span>
+                        <button class="quantity-btn" onclick="changeQuantity(${index}, 1)">+</button>
+                    </div>
+                    <strong>$${itemTotal.toFixed(2)}</strong>
+                    <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                </div>
+            `;
+        });
+        summary.innerHTML = `
+            <div class="summary-row">
+                <span>Items</span>
+                <span>${totalItems}</span>
+            </div>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>$${subtotal.toFixed(2)}</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <span>$${subtotal.toFixed(2)}</span>
+            </div>
+            <div class="action-buttons">
+                <button class="checkout-btn" onclick="checkout()"> Checkout</button>
+                <button onclick="clearCart()">Clear Cart</button>
+            </div>
+        `;
+    }
+    function changeQuantity(index, change) {
+        if (!order[index]) {
+            return;
+        }
+        order[index].quantity =
+            Number(order[index].quantity) + change;
+        if (order[index].quantity <= 0) {
+            order.splice(index, 1);
+        }
+        saveOrder();
+        displayOrder();
+        updateOrderCount();
+    }
+    function removeItem(index) {
+        if (!order[index]) {
+            return;
+        }
+        const itemName =
+            order[index].name;
+        if (
+            confirm("Remove " + itemName + " from your order?")
+        ) {
+            order.splice(index, 1);
+            saveOrder();
+            displayOrder();
+            updateOrderCount();
+        }
+    }
+    function clearCart() {
+        if (order.length === 0) {
+            return;
+        }
+        if (
+            confirm("Are you sure you want to clear your order?")
+        ) {
+            order = [];
+            saveOrder();
+            displayOrder();
+            updateOrderCount();
+        }
+    }
+    function checkout() {
+        if (order.length === 0) {
+            alert("Your order is empty!");
+            return;
+        }
+        const customerSelect =
+            document.getElementById("customerSelect");
+        const customerIndex =
+            customerSelect.value;
+        if (customerIndex === "") {
+            alert("Please select a customer!");
+            return;
+        }
+        customers =
+            JSON.parse(
+                localStorage.getItem("customers")
+            ) || [];
+        const customer =
+            customers[customerIndex];
+        if (!customer) {
+            alert("Customer not found!");
+           return;
+        }
+        let subtotal = 0;
+        order.forEach(item => {
+            subtotal +=
+                Number(item.price) ;
+                Number(item.quantity);
+        });
+        const newOrder = {
+            id: Date.now(),
+            customerId:
+                customer.id ||
+                customer.customerId ||
+                customerIndex,
+            customerName:
+                customer.name ||
+                customer.customerName ||
+                "Unknown",
+            products: order.map(item => ({
+                name: item.name,
+                price: Number(item.price),
+                quantity: Number(item.quantity)
+            })),
+            totalPrice: subtotal,
+            dateOrder:
+                new Date().toLocaleString()
+        };
+        let orders =
+            JSON.parse(
+                localStorage.getItem("orders")
+            ) || [];
+        orders.push(newOrder);
+        localStorage.setItem(
+            "orders",
+            JSON.stringify(orders)
+        );
+        // Clear current order
+        order = [];
+        saveOrder();
+        displayOrder();
+        updateOrderCount();
+        alert(
+            "Order completed successfully! 🎉\n\n" +
+            "Customer: " +
+            newOrder.customerName +
+            "\nTotal: $" +
+            subtotal.toFixed(2)
+        );
+    }
+    window.addEventListener(
+        "pageshow",
+        function () {
+            order =
+                JSON.parse(
+                    localStorage.getItem("order")
+                ) || [];
+            customers =
+                JSON.parse(
+                    localStorage.getItem("customers")
+                ) || [];
+            updateOrderCount();
+      }
+    );
+</script>
 </body>
 </html>

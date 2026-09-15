@@ -107,11 +107,11 @@
         </div>
 
         <div class="card">
-            <img src="https://shisha.co.id/wp-content/uploads/2023/09/cocacola-370x351.jpg.webp" alt="Coca-Cola">
+            <img src="https://www.healthyfood.com/wp-content/uploads/2016/11/Berry-boba-tea-1024x652.jpg" alt="Berry boba tea">
             <div class="card-body">
-                <h4>Coca-Cola</h4>
-                <p>$4.00</p>
-                <button class="order-btn" onclick="addToOrder('Coca-Cola', 4)">Order</button>
+                <h4>Berry boba tea</h4>
+                <p>$6.50</p>
+                <button class="order-btn" onclick="addToOrder('Berry boba tea', 6.5)">Order</button>
             </div>
         </div>
     </div>
@@ -153,21 +153,25 @@
         </div>
     </div>
     <script>
-        let order = [];
-        function addToOrder(name, price) {
-            const existingItem = order.find(item => item.name === name);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                order.push({
-                    name: name,
-                    price: price,
-                    quantity: 1
-                });
-            }
-            localStorage.setItem("order", JSON.stringify(order));
-            alert(name + " added to order!");
+    function addToOrder(name, price) {
+        // Get old order from localStorage
+        let order = JSON.parse(localStorage.getItem("order")) || [];
+
+        // Check if the item already exists
+        const existingItem = order.find(item => item.name === name);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            order.push({
+                name: name,
+                price: price,
+                quantity: 1
+            });
         }
-    </script>
+        // Save updated order
+        localStorage.setItem("order", JSON.stringify(order));
+        alert(name + " added to order!");
+    }
+</script>
 </body>
 </html>
