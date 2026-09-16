@@ -176,89 +176,87 @@
 
     <script>
 
-        function registerPage(event) {
+function registerPage(event) {
 
-            event.preventDefault();
+event.preventDefault();
 
-            let password =
-                document.getElementById("password");
+let name = document.querySelector(
+    'input[placeholder="Enter your full name"]'
+).value;
 
-            let confirmPassword =
-                document.getElementById("confirmPassword");
+let email = document.querySelector(
+    'input[placeholder="you@example.com"]'
+).value;
 
+let password =
+    document.getElementById("password").value;
 
-            if (password.value !== confirmPassword.value) {
-
-                alert("Passwords do not match!");
-
-                return;
-            }
-
-
-            alert("Account created successfully!");
-
-            window.location.href = "login.html";
-        }
+let confirmPassword =
+    document.getElementById("confirmPassword").value;
 
 
-        function showPassword() {
+// Check password
+if (password !== confirmPassword) {
 
-            let password =
-                document.getElementById("password");
+    alert("Passwords do not match!");
 
-            let icon =
-                document.getElementById("passwordIcon");
-
-
-            if (password.type === "password") {
-
-                password.type = "text";
-
-                icon.classList.remove("bi-eye");
-
-                icon.classList.add("bi-eye-slash");
-
-            } else {
-
-                password.type = "password";
-
-                icon.classList.remove("bi-eye-slash");
-
-                icon.classList.add("bi-eye");
-
-            }
-
-        }
+    return;
+}
 
 
-        function showConfirmPassword() {
-
-            let password =
-                document.getElementById("confirmPassword");
-
-            let icon =
-                document.getElementById("confirmIcon");
+// Get existing users
+let users =
+    JSON.parse(localStorage.getItem("users")) || [];
 
 
-            if (password.type === "password") {
+// Check duplicate email
+let existingUser = users.find(
+    user => user.email === email
+);
 
-                password.type = "text";
+if (existingUser) {
 
-                icon.classList.remove("bi-eye");
+    alert("This email is already registered!");
 
-                icon.classList.add("bi-eye-slash");
+    return;
+}
 
-            } else {
 
-                password.type = "password";
+// Create new user
+let newUser = {
 
-                icon.classList.remove("bi-eye-slash");
+    id: "USR-" + Date.now(),
 
-                icon.classList.add("bi-eye");
+    name: name,
 
-            }
+    email: email,
 
-        }
+    password: password,
+
+    role: "Customer",
+
+    status: "Active"
+
+};
+
+
+// Add user
+users.push(newUser);
+
+
+// Save users
+localStorage.setItem(
+    "users",
+    JSON.stringify(users)
+);
+
+
+alert("Account created successfully!");
+
+
+// Go to Login
+window.location.href = "login.html";
+}
 
     </script>
 

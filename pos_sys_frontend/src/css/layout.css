@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+}
+
+
+/* Sidebar */
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    background: #ffffff;
+
+    border-right: 1px solid #e5e5e5;
+
+    padding: 25px 15px;
+}
+
+
+/* Logo */
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+
+    padding: 10px 15px;
+    margin-bottom: 30px;
+}
+
+.logo i {
+    margin-right: 8px;
+}
+
+
+/* Menu */
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    margin-bottom: 8px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+
+    text-decoration: none;
+    color: #555;
+
+    padding: 12px 15px;
+
+    border-radius: 10px;
+
+    transition: 0.2s;
+}
+
+.menu a:hover {
+    background: #f1f1f1;
+    color: #000;
+}
+
+.menu i {
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+
+/* Logout */
+
+.logout {
+    position: absolute;
+    bottom: 25px;
+    left: 15px;
+    right: 15px;
+}
+
+.logout a {
+    display: flex;
+    align-items: center;
+
+    text-decoration: none;
+    color: #555;
+
+    padding: 12px 15px;
+}
+
+.logout i {
+    margin-right: 12px;
+}
+
+
+/* Main Content */
+
+.main-content {
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+
+/* Topbar */
+
+.topbar {
+    height: 70px;
+
+    background: white;
+
+    border-bottom: 1px solid #e5e5e5;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 30px;
+}
+
+.topbar h4 {
+    margin: 0;
+}
+
+
+/* User */
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info i {
+    font-size: 30px;
+}
+
+
+/* Content */
+
+.content {
+    padding: 30px;
+}
