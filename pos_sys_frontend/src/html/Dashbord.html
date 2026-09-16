@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+
+    <title>Restaurant Management System - Dashboard</title>
+
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -15,9 +19,13 @@
         body {
             background-color: #f0f0f0;
             padding: 20px;
+            color: #333;
         }
 
-        /* --- TOP STATS CARDS GRID --- */
+        /* =========================
+           STATS
+        ========================= */
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -27,28 +35,31 @@
 
         .stat-card {
             background-color: #4a2f26;
-            color: #ffffff;
+            color: white;
             padding: 15px 20px;
             display: flex;
             align-items: center;
             gap: 15px;
-            border-radius: 2px;
+            border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .card-icon {
             width: 45px;
             height: 45px;
+
             display: flex;
             align-items: center;
             justify-content: center;
+
             font-size: 24px;
-            background-color: rgba(255, 255, 255, 0.15);
+
+            background-color: rgba(255,255,255,0.15);
             border-radius: 4px;
         }
 
         .card-info .number {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             margin-bottom: 4px;
         }
@@ -58,25 +69,31 @@
             color: #cccccc;
         }
 
-        /* --- SALES TABLE SECTION --- */
+        /* =========================
+           SALES SECTION
+        ========================= */
+
         .sales-section {
-            background-color: #ffffff;
+            background-color: white;
             padding: 15px;
             border: 1px solid #ccc;
         }
 
         .section-title {
-            font-size: 12px;
-            font-weight: normal;
-            color: #333333;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
             margin-bottom: 10px;
         }
 
         .table-container {
             width: 100%;
             height: 380px;
-            background-color: #a0a0a0; /* Grey background matching image */
+
+            background-color: #a0a0a0;
+
             border: 1px solid #4a2f26;
+
             overflow-y: auto;
         }
 
@@ -88,155 +105,556 @@
 
         th {
             background-color: #4a2f26;
-            color: #ffffff;
+            color: white;
+
             text-align: left;
-            padding: 6px 8px;
+
+            padding: 8px;
+
             font-weight: normal;
+
             border-right: 1px solid #614035;
+
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
         td {
-            padding: 6px 8px;
+            padding: 8px;
+
             border-right: 1px solid #d0d0d0;
+
             color: #333;
-            background-color: #ffffff;
+
+            background-color: white;
         }
 
         tr {
             cursor: pointer;
         }
 
-        tr.selected td {
-            background-color: #0078d7 !important;
-            color: #ffffff !important;
-        }
-
-        tr:hover:not(.selected) td {
+        tr:hover td {
             background-color: #f1f1f1;
         }
-    </style>
-</head>
-<body>
 
-    <!-- Top Summary Cards -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="card-icon">👥</div>
-            <div class="card-info">
-                <div class="number" id="totalUsers">0</div>
-                <div class="label">Total Users</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="card-icon">📦</div>
-            <div class="card-info">
-                <div class="number" id="totalProducts">0</div>
-                <div class="label">Total Products</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="card-icon">💵</div>
-            <div class="card-info">
-                <div class="number" id="todayRevenue">$0.00</div>
-                <div class="label">Today's Revenue</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="card-icon">💰</div>
-            <div class="card-info">
-                <div class="number" id="totalRevenue">$0.00</div>
-                <div class="label">Total Revenue</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Today's Sales Table -->
-    <div class="sales-section">
-        <div class="section-title">Today's Sales</div>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>customerId</th>
-                        <th>productsIds</th>
-                        <th>quantities</th>
-                        <th>prices</th>
-                        <th>totalPrice</th>
-                        <th>dateOrder</th>
-                    </tr>
-                </thead>
-                <tbody id="salesTableBody">
-                    <!-- Dynamic Data Rows Populated via JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        // Data Store
-        const systemStats = {
-            totalUsers: 3,
-            totalProducts: 6,
-            totalRevenue: 295.00
-        };
-
-        const salesData = [
-            { id: 2, customerId: 'CID-2', productsIds: '4,5', quantities: '2,1', prices: '24.00,2.00', totalPrice: 26.00, dateOrder: '01-28-2025' },
-            { id: 3, customerId: 'CID-3', productsIds: '4,5', quantities: '2,3', prices: '24.00,6.00', totalPrice: 30.00, dateOrder: '01-28-2025' },
-            { id: 4, customerId: 'CID-4', productsIds: '4,5', quantities: '1,2', prices: '12.00,4.00', totalPrice: 16.00, dateOrder: '01-28-2025' },
-            { id: 5, customerId: 'CID-5', productsIds: '4,5', quantities: '2,5', prices: '24.00,10.00', totalPrice: 34.00, dateOrder: '01-28-2025' },
-            { id: 6, customerId: 'CID-6', productsIds: '7,4,5,6', quantities: '3,4,5,6', prices: '45.00,48.00,10.00,60.00', totalPrice: 163.00, dateOrder: '01-28-2025' }
-        ];
-
-        // Render Sales Rows into HTML Table
-        function renderSalesTable() {
-            const tableBody = document.getElementById('salesTableBody');
-            tableBody.innerHTML = '';
-
-            let todayRevenueCalc = 0;
-
-            salesData.forEach((row, index) => {
-                todayRevenueCalc += row.totalPrice;
-
-                const tr = document.createElement('tr');
-                if (index === 0) tr.classList.add('selected'); // Highlight first row by default
-
-                tr.innerHTML = `
-                    <td>${row.id}</td>
-                    <td>${row.customerId}</td>
-                    <td>${row.productsIds}</td>
-                    <td>${row.quantities}</td>
-                    <td>${row.prices}</td>
-                    <td>${row.totalPrice.toFixed(2)}</td>
-                    <td>${row.dateOrder}</td>
-                `;
-
-                // Add row click listener to select row
-                tr.addEventListener('click', function() {
-                    document.querySelectorAll('#salesTableBody tr').forEach(r => r.classList.remove('selected'));
-                    tr.classList.add('selected');
-                });
-
-                tableBody.appendChild(tr);
-            });
-
-            // Update Top Cards Dynamically
-            document.getElementById('totalUsers').textContent = systemStats.totalUsers;
-            document.getElementById('totalProducts').textContent = systemStats.totalProducts;
-            document.getElementById('todayRevenue').textContent = `$${todayRevenueCalc.toFixed(2)}`;
-            document.getElementById('totalRevenue').textContent = `$${systemStats.totalRevenue.toFixed(2)}`;
+        tr.selected td {
+            background-color: #0078d7 !important;
+            color: white !important;
         }
 
-        // Run rendering on page load
-        document.addEventListener('DOMContentLoaded', renderSalesTable);
+        /* =========================
+           EMPTY DATA
+        ========================= */
+
+        .empty-row {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- =========================
+         TOP STAT CARDS
+    ========================= -->
+
+    <div class="stats-grid">
+
+        <!-- TOTAL USERS -->
+
+        <div class="stat-card">
+
+            <div class="card-icon">
+                👥
+            </div>
+
+            <div class="card-info">
+
+                <div
+                    class="number"
+                    id="totalUsers">
+                    0
+                </div>
+
+                <div class="label">
+                    Total Users
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL PRODUCTS -->
+
+        <div class="stat-card">
+
+            <div class="card-icon">
+                📦
+            </div>
+
+            <div class="card-info">
+
+                <div
+                    class="number"
+                    id="totalProducts">
+                    0
+                </div>
+
+                <div class="label">
+                    Total Products
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TODAY REVENUE -->
+
+        <div class="stat-card">
+
+            <div class="card-icon">
+                💵
+            </div>
+
+            <div class="card-info">
+
+                <div
+                    class="number"
+                    id="todayRevenue">
+                    $0.00
+                </div>
+
+                <div class="label">
+                    Today's Revenue
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL REVENUE -->
+
+        <div class="stat-card">
+
+            <div class="card-icon">
+                💰
+            </div>
+
+            <div class="card-info">
+
+                <div
+                    class="number"
+                    id="totalRevenue">
+                    $0.00
+                </div>
+
+                <div class="label">
+                    Total Revenue
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         TODAY'S SALES
+    ========================= -->
+
+    <div class="sales-section">
+
+        <div class="section-title">
+            Today's Sales
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Customer ID</th>
+
+                        <th>Products</th>
+
+                        <th>Quantities</th>
+
+                        <th>Prices</th>
+
+                        <th>Total Price</th>
+
+                        <th>Date Order</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="salesTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        /* =========================================
+           GET DATA FROM LOCAL STORAGE
+        ========================================= */
+
+        function getProducts() {
+
+            return JSON.parse(
+                localStorage.getItem("products")
+            ) || [];
+
+        }
+
+
+        function getUsers() {
+
+            return JSON.parse(
+                localStorage.getItem("users")
+            ) || [];
+
+        }
+
+
+        function getOrders() {
+
+            return JSON.parse(
+                localStorage.getItem("orders")
+            ) || [];
+
+        }
+
+
+
+        /* =========================================
+           GET TODAY DATE
+        ========================================= */
+
+        function getToday() {
+
+            const today = new Date();
+
+            const year =
+                today.getFullYear();
+
+            const month =
+                String(
+                    today.getMonth() + 1
+                ).padStart(2, "0");
+
+            const day =
+                String(
+                    today.getDate()
+                ).padStart(2, "0");
+
+            return `${year}-${month}-${day}`;
+
+        }
+
+
+
+        /* =========================================
+           DISPLAY TOTAL PRODUCTS
+        ========================================= */
+
+        function updateTotalProducts() {
+
+            const products =
+                getProducts();
+
+            document.getElementById(
+                "totalProducts"
+            ).textContent =
+                products.length;
+
+        }
+
+
+
+        /* =========================================
+           DISPLAY TOTAL USERS
+        ========================================= */
+
+        function updateTotalUsers() {
+
+            const users =
+                getUsers();
+
+            document.getElementById(
+                "totalUsers"
+            ).textContent =
+                users.length;
+
+        }
+
+
+
+        /* =========================================
+           CALCULATE REVENUE
+        ========================================= */
+
+        function updateRevenue() {
+
+            const orders =
+                getOrders();
+
+
+            let totalRevenue = 0;
+
+            let todayRevenue = 0;
+
+
+            const today =
+                getToday();
+
+
+            orders.forEach(order => {
+
+                const total =
+                    Number(
+                        order.totalPrice
+                    ) || 0;
+
+
+                totalRevenue += total;
+
+
+                if (
+                    order.dateOrder === today
+                ) {
+
+                    todayRevenue += total;
+
+                }
+
+            });
+
+
+            document.getElementById(
+                "todayRevenue"
+            ).textContent =
+                "$" +
+                todayRevenue.toFixed(2);
+
+
+            document.getElementById(
+                "totalRevenue"
+            ).textContent =
+                "$" +
+                totalRevenue.toFixed(2);
+
+        }
+
+
+
+        /* =========================================
+           DISPLAY TODAY'S SALES
+        ========================================= */
+
+        function displaySales() {
+
+            const tableBody =
+                document.getElementById(
+                    "salesTableBody"
+                );
+
+
+            tableBody.innerHTML = "";
+
+
+            const orders =
+                getOrders();
+
+
+            const today =
+                getToday();
+
+
+            const todayOrders =
+                orders.filter(
+                    order =>
+                        order.dateOrder === today
+                );
+
+
+            if (
+                todayOrders.length === 0
+            ) {
+
+                tableBody.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty-row"
+                        >
+
+                            No sales today.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+
+            todayOrders.forEach(
+                (order, index) => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    if (index === 0) {
+
+                        row.classList.add(
+                            "selected"
+                        );
+
+                    }
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${order.id}
+                        </td>
+
+                        <td>
+                            ${order.customerId || "-"}
+                        </td>
+
+                        <td>
+                            ${order.productsIds || "-"}
+                        </td>
+
+                        <td>
+                            ${order.quantities || "-"}
+                        </td>
+
+                        <td>
+                            ${order.prices || "-"}
+                        </td>
+
+                        <td>
+                            $${Number(
+                                order.totalPrice || 0
+                            ).toFixed(2)}
+                        </td>
+
+                        <td>
+                            ${order.dateOrder}
+                        </td>
+
+                    `;
+
+
+                    row.addEventListener(
+                        "click",
+                        function() {
+
+                            document
+                                .querySelectorAll(
+                                    "#salesTableBody tr"
+                                )
+                                .forEach(
+                                    r =>
+                                        r.classList.remove(
+                                            "selected"
+                                        )
+                                );
+
+
+                            row.classList.add(
+                                "selected"
+                            );
+
+                        }
+                    );
+                    tableBody.appendChild( row);
+                }
+            );
+
+        }
+
+        function updateDashboard() {
+            updateTotalUsers();
+            updateTotalProducts();
+            updateRevenue();
+            displaySales();
+        }
+        updateDashboard();
+        setInterval(
+            updateDashboard,
+            1000
+        );
+
     </script>
+
+
 </body>
+
 </html>
