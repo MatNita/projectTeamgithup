@@ -1,669 +1,203 @@
-<!-- admin password "admin123" -->
-<!-- cashier password "cashier123" -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-<title>Choose Role - InventoryPro</title>
-<!-- Bootstrap CSS -->
-<link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet">
-<!-- Bootstrap Icons -->
-<link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<style>
-
-    body {
-
-        background: rgb(117, 103, 106);
-
-        min-height: 100vh;
-
-        display: flex;
-
-        justify-content: center;
-
-        align-items: center;
-
-        padding: 20px;
-
-    }
-
-
-    /* =========================
-       MAIN CARD
-    ========================== */
-
-    .role-card {
-
-        width: 100%;
-
-        max-width: 1000px;
-
-        background: white;
-
-        border-radius: 25px;
-
-        padding: 50px;
-
-        box-shadow:
-            0 10px 30px rgba(0, 0, 0, 0.15);
-
-    }
-
-
-    /* =========================
-       TITLE
-    ========================== */
-
-    .role-title {
-
-        text-align: center;
-
-        font-size: 32px;
-
-        font-weight: 700;
-
-        margin-bottom: 10px;
-
-    }
-
-
-    .role-subtitle {
-
-        text-align: center;
-
-        color: #777;
-
-        margin-bottom: 40px;
-
-    }
-
-
-    /* =========================
-       ROLE BOX
-    ========================== */
-
-    .role-box {
-
-        border: 2px solid #eeeeee;
-
-        border-radius: 20px;
-
-        padding: 30px 20px;
-
-        text-align: center;
-
-        height: 100%;
-
-        transition: 0.3s;
-
-    }
-
-
-    .role-box:hover {
-
-        transform: translateY(-5px);
-
-        border-color: #ff69b4;
-
-        box-shadow:
-            0 8px 20px rgba(0, 0, 0, 0.10);
-
-    }
-
-
-    /* =========================
-       ICON
-    ========================== */
-
-    .role-icon {
-
-        font-size: 50px;
-
-        margin-bottom: 15px;
-
-    }
-
-
-    /* =========================
-       ROLE NAME
-    ========================== */
-
-    .role-name {
-
-        font-size: 24px;
-
-        font-weight: 600;
-
-        margin-bottom: 10px;
-
-    }
-
-
-    /* =========================
-       DESCRIPTION
-    ========================== */
-
-    .role-description {
-
-        color: #777;
-
-        min-height: 50px;
-
-        margin-bottom: 25px;
-
-    }
-
-
-    /* =========================
-       BUTTON
-    ========================== */
-
-    .choose-btn {
-
-        width: 100%;
-
-        border: none;
-
-        padding: 12px;
-
-        border-radius: 10px;
-
-        background: #ff69b4;
-
-        color: white;
-
-        font-weight: 600;
-
-        cursor: pointer;
-
-        transition: 0.3s;
-
-    }
-
-
-    .choose-btn:hover {
-
-        background: #ff4fa3;
-
-    }
-
-
-    /* =========================
-       LOGOUT
-    ========================== */
-
-    .logout-btn {
-
-        display: block;
-
-        margin: 30px auto 0;
-
-        border: none;
-
-        background: transparent;
-
-        color: #777;
-
-        text-decoration: underline;
-
-        cursor: pointer;
-
-    }
-
-
-    .logout-btn:hover {
-
-        color: red;
-
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Role - InventoryPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { 
+            background: rgb(117, 103, 106); 
+            min-height: 100vh; display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+        }
+        .role-card { 
+            width: 100%; 
+            max-width: 1000px; 
+            background: white; 
+            border-radius: 25px; 
+            padding: 50px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); 
+        }
+        .role-title { 
+            text-align: center; 
+            font-size: 32px; 
+            font-weight: 700; 
+            margin-bottom: 10px; 
+        }
+        .role-subtitle { 
+            text-align: center; 
+            color: #777; margin-bottom: 40px; 
+        }
+        .role-box { 
+            border: 2px solid #eeeeee; 
+            border-radius: 20px; padding: 30px 20px; 
+            text-align: center; 
+            height: 100%; 
+            transition: 0.3s; 
+        }
+        .role-box:hover { 
+            transform: translateY(-5px); 
+            border-color: #ff69b4; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10); 
+        }
+        .role-icon { 
+            font-size: 50px; 
+            margin-bottom: 15px; 
+        }
+        .role-name { 
+            font-size: 24px; 
+            font-weight: 600; 
+            margin-bottom: 10px; 
+        }
+        .role-description { 
+            color: #777; 
+            min-height: 50px; 
+            margin-bottom: 25px; 
+        }
+        .choose-btn { 
+            width: 100%; 
+            border: none; 
+            padding: 12px; 
+            border-radius: 10px; 
+            background: #ff69b4; 
+            color: white; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.3s; 
+        }
+        .choose-btn:hover { 
+            background: #ff4fa3; 
+        }
+        .logout-btn { 
+            display: block; 
+            margin: 30px auto 0; 
+            border: none; 
+            background: transparent; 
+            color: #777; 
+            text-decoration: underline; 
+            cursor: pointer; 
+        }
+        .logout-btn:hover { 
+            color: red; 
+        }
+    </style>
 </head>
 <body>
-<!-- =========================
-     MAIN CARD
-========================== -->
 
 <div class="role-card">
-
-
-    <!-- =========================
-         TITLE
-    ========================== -->
-
-    <h1 class="role-title">
-
-        Choose Your Role
-
-    </h1>
-
-
-    <p class="role-subtitle">
-
-        Select the role you want to use
-
-    </p>
-
-
-
-    <!-- =========================
-         ROLE OPTIONS
-    ========================== -->
+    <h1 class="role-title">Choose Your Role</h1>
+    <p class="role-subtitle">Select the role you want to use</p>
 
     <div class="row g-4">
-
-
-        <!-- =========================
-             ADMIN
-        ========================== -->
-
+        <!-- ADMIN -->
         <div class="col-md-4">
-
             <div class="role-box">
-
-
-                <div class="role-icon">
-
-                    <i class="bi bi-person-gear"></i>
-
-                </div>
-
-
-                <div class="role-name">
-
-                    Admin
-
-                </div>
-
-
-                <p class="role-description">
-
-                    Access Dashboard,
-                    Inventory and Customer.
-
-                </p>
-
-
-                <button
-                    type="button"
-                    class="choose-btn"
-                    onclick="chooseRole('Admin')"
-                >
-
-                    Choose Admin
-
-                </button>
-
-
+                <div class="role-icon"><i class="bi bi-person-gear"></i></div>
+                <div class="role-name">Admin</div>
+                <p class="role-description">Access Dashboard, Inventory and Customer.</p>
+                <button type="button" class="choose-btn" onclick="chooseRole('Admin')">Choose Admin</button>
             </div>
-
         </div>
 
-
-
-        <!-- =========================
-             CASHIER
-        ========================== -->
-
+        <!-- CASHIER -->
         <div class="col-md-4">
-
             <div class="role-box">
-
-
-                <div class="role-icon">
-
-                    <i class="bi bi-person-badge"></i>
-
-                </div>
-
-
-                <div class="role-name">
-
-                    Cashier
-
-                </div>
-
-
-                <p class="role-description">
-
-                    Access Dashboard,
-                    Inventory, Customer and Shop.
-
-                </p>
-
-
-                <button
-                    type="button"
-                    class="choose-btn"
-                    onclick="chooseRole('Cashier')"
-                >
-
-                    Choose Cashier
-
-                </button>
-
-
+                <div class="role-icon"><i class="bi bi-person-badge"></i></div>
+                <div class="role-name">Cashier</div>
+                <p class="role-description">Access Dashboard, Inventory, Customer and Shop.</p>
+                <button type="button" class="choose-btn" onclick="chooseRole('Cashier')">Choose Cashier</button>
             </div>
-
         </div>
 
-
-
-        <!-- =========================
-             USER
-        ========================== -->
-
+        <!-- USER -->
         <div class="col-md-4">
-
             <div class="role-box">
-
-
-                <div class="role-icon">
-
-                    <i class="bi bi-person"></i>
-
-                </div>
-
-
-                <div class="role-name">
-
-                    User
-
-                </div>
-
-
-                <p class="role-description">
-
-                    Access Shop only
-                    to view and buy products.
-
-                </p>
-
-
-                <button
-                    type="button"
-                    class="choose-btn"
-                    onclick="chooseRole('User')"
-                >
-
-                    Choose User
-
-                </button>
-
-
+                <div class="role-icon"><i class="bi bi-person"></i></div>
+                <div class="role-name">User</div>
+                <p class="role-description">Access Shop only to view and buy products.</p>
+                <button type="button" class="choose-btn" onclick="chooseRole('User')">Choose User</button>
             </div>
-
         </div>
-
-
     </div>
 
-
-
-    <!-- =========================
-         LOGOUT
-    ========================== -->
-
-    <button
-        type="button"
-        class="logout-btn"
-        onclick="logout()"
-    >
-
-        Logout
-
-    </button>
-
-
+    <button type="button" class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
-
-
-<!-- =========================
-     JAVASCRIPT
-========================== -->
-
 <script>
-
-
-    // ==================================================
-    // CHECK LOGIN
-    // ==================================================
-
     function checkLogin() {
-
-
-        let currentUser =
-            JSON.parse(
-                localStorage.getItem("currentUser")
-            );
-
-
-        // No logged-in user
-
+        let currentUser = JSON.parse(localStorage.getItem("currentUser"));
         if (!currentUser) {
-
-            alert(
-                "Please login first!"
-            );
-
-
-            window.location.href =
-                "login.html";
-
+            alert("Please login first!");
+            window.location.href = "login.html";
         }
-
     }
-
-
-
-    // ==================================================
-    // CHOOSE ROLE
-    // ==================================================
 
     function chooseRole(role) {
-
-
-        // Get current user
-
-        let currentUser =
-            JSON.parse(
-                localStorage.getItem("currentUser")
-            );
-
-
-        // Check if logged in
-
+        let currentUser = JSON.parse(localStorage.getItem("currentUser"));
         if (!currentUser) {
-
-
-            alert(
-                "Please login first!"
-            );
-
-
-            window.location.href =
-                "login.html";
-
-
+            alert("Please login first!");
+            window.location.href = "login.html";
             return;
-
         }
-
-
-
-        // ==================================================
-        // ADMIN
-        // ==================================================
 
         if (role === "Admin") {
-
-
-            // Ask Admin password
-
-            let password =
-                prompt(
-                    "Enter Admin password:"
-                );
-
-
-            // Check password
-
+            let password = prompt("Enter Admin password:");
             if (password === "admin123") {
-
-
-                // Save selected role
-
-                currentUser.selectedRole =
-                    "Admin";
-
-
-                localStorage.setItem(
-                    "currentUser",
-                    JSON.stringify(currentUser)
-                );
-
-
-                // Go to Dashboard
-
-                window.location.href =
-                    "index.html";
-
+                currentUser.role = "Admin";
+                currentUser.selectedRole = "Admin";
+                localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                window.location.href = "shop.html"; // ឬ index.html តាមតម្រូវការ
+            } else {
+                alert("Incorrect Admin password!");
             }
-
-            else {
-
-
-                alert(
-                    "Incorrect Admin password!"
-                );
-
-            }
-
-        }
-
-
-
-        // ==================================================
-        // CASHIER
-        // ==================================================
-
+        } 
         else if (role === "Cashier") {
-
-
-            // Ask Cashier password
-
-            let password =
-                prompt(
-                    "Enter Cashier password:"
-                );
-
-
-            // Check password
-
+            let password = prompt("Enter Cashier password:");
             if (password === "cashier123") {
-
-
-                // Save selected role
-
-                currentUser.selectedRole =
-                    "Cashier";
-
-
-                localStorage.setItem(
-                    "currentUser",
-                    JSON.stringify(currentUser)
-                );
-
-
-                // Go to Dashboard
-
-                window.location.href =
-                    "index.html";
-
+                currentUser.role = "Cashier";
+                currentUser.selectedRole = "Cashier";
+                localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                window.location.href = "shop.html"; // ឬ index.html តាមតម្រូវការ
+            } else {
+                alert("Incorrect Cashier password!");
             }
-
-            else {
-
-
-                alert(
-                    "Incorrect Cashier password!"
-                );
-
-            }
-
-        }
-
-
-
-        // ==================================================
-        // USER
-        // ==================================================
-
+        } 
         else if (role === "User") {
+            currentUser.role = "User";
+            currentUser.selectedRole = "User";
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
+            // Sync ទិន្នន័យ User នេះចូលទៅក្នុងបញ្ជី customers សម្រាប់ឱ្យ Admin/Cashier មើលឃើញក្នុង Dropdown Select
+            syncUserToCustomers(currentUser);
 
-            // Save selected role
-
-            currentUser.selectedRole =
-                "User";
-
-
-            localStorage.setItem(
-                "currentUser",
-                JSON.stringify(currentUser)
-            );
-
-
-            // Go directly to Shop
-
-            window.location.href =
-                "shop.html";
-
+            window.location.href = "shop.html";
         }
-
     }
 
-
-
-    // ==================================================
-    // LOGOUT
-    // ==================================================
+    function syncUserToCustomers(user) {
+        let customers = JSON.parse(localStorage.getItem("customers")) || [];
+        let exists = customers.some(c => String(c.id) === String(user.id));
+        
+        if (!exists) {
+            customers.push({
+                id: user.id || "USR-" + Date.now(),
+                name: user.name || "Customer",
+                email: user.email || ""
+            });
+            localStorage.setItem("customers", JSON.stringify(customers));
+        }
+    }
 
     function logout() {
-
-
-        // Remove current user
-
-        localStorage.removeItem(
-            "currentUser"
-        );
-
-
-        // Go back to login
-
-        window.location.href =
-            "login.html";
-
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
     }
 
-
-
-    // ==================================================
-    // RUN LOGIN CHECK
-    // ==================================================
-
     checkLogin();
-
-
 </script>
-
 </body>
-
 </html>

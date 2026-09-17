@@ -297,6 +297,7 @@
                     <a href="Inventory.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Inventory</a>
                     <!--<a href="Categories.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Categories</a>-->
                     <a href="Customer.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Customers</a>
+                    <a href="order.html" target="contentFrame" class="nav-link" onclick="hideWelcomeScreen(this)">Orders</a>
                 </nav>
 
                 <button class="logout-btn">Logout</button>
@@ -320,8 +321,6 @@
             </main>
         </div>
     </div>
-
-    <!-- Navigation JS -->
     <script>
         function hideWelcomeScreen(element) {
             const welcomeScreen = document.getElementById('welcomeScreen');
@@ -336,7 +335,6 @@
                 element.classList.add('active');
             }
         }
-
         function openShopPage() {
             const shopNavLink = document.getElementById('nav-shop');
             hideWelcomeScreen(shopNavLink);

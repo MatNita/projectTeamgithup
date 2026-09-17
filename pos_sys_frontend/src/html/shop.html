@@ -3,37 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Shop - NitaNit Restaurant</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f7f3f0; color: #333; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+        /* Navigation Menu (សម្រាប់ Admin/Cashier) */
+        .main-nav {
+            background: #4a2f26;
+            padding: 10px 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
         }
-
-        body {
-            background: #f7f3f0;
-            color: #333;
+        .main-nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-
-        /* =========================
-           HEADER
-        ========================= */
+        .main-nav a:hover, .main-nav a.active {
+            color: #fff;
+            text-decoration: underline;
+        }
 
         .shop-header {
             background: #614035;
             color: white;
-            padding: 18px 30px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -42,31 +46,36 @@
             z-index: 1000;
         }
 
-        .shop-title {
-            font-size: 25px;
-            font-weight: bold;
-        }
+        .shop-title { font-size: 24px; font-weight: bold; }
+        .header-right { display: flex; align-items: center; gap: 15px; }
 
-        .customer-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .customer-box {
+        /* Customer/User Display Box */
+        .customer-display-box {
             background: #4a2f26;
             padding: 8px 15px;
             border-radius: 8px;
         }
+        .customer-display-box small { display: block; font-size: 11px; color: #ddd; }
+        .customer-display-box span { font-weight: bold; }
 
-        .customer-box small {
-            display: block;
-            font-size: 12px;
-            color: #ddd;
+        /* Admin/Cashier Select Customer Box */
+        .staff-select-box {
+            background: #4a2f26;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
         }
-
-        .customer-box span {
+        .staff-select-box label { font-size: 11px; color: #ddd; margin-bottom: 2px; }
+        .staff-select-box select {
+            background: #fff;
+            color: #333;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 13px;
             font-weight: bold;
+            outline: none;
         }
 
         .cart-button {
@@ -79,1739 +88,459 @@
             cursor: pointer;
         }
 
-        .cart-button:hover {
-            background: #eee;
-        }
+        .container-shop { width: 95%; max-width: 1400px; margin: 25px auto; }
+        .page-title { font-size: 28px; font-weight: bold; color: #614035; }
+        .filter-area { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin: 20px 0; }
+        .category-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .category-btn { border: 1px solid #614035; background: white; color: #614035; padding: 6px 16px; border-radius: 20px; cursor: pointer; }
+        .category-btn.active { background: #614035; color: white; }
 
-        /* =========================
-           MAIN
-        ========================= */
-
-        .container-shop {
-            width: 95%;
-            max-width: 1400px;
-            margin: 25px auto;
-        }
-
-        .page-title {
-            font-size: 30px;
-            font-weight: bold;
-            color: #614035;
-            margin-bottom: 5px;
-        }
-
-        .page-subtitle {
-            color: #777;
-            margin-bottom: 25px;
-        }
-
-        /* =========================
-           SEARCH + CATEGORY
-        ========================= */
-
-        .filter-area {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 12px;
-            color: #888;
-        }
-
-        .search-box input {
-            padding-left: 42px;
-        }
-
-        .category-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .category-btn {
-            border: 1px solid #614035;
-            background: white;
-            color: #614035;
-            padding: 8px 18px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        .category-btn:hover,
-        .category-btn.active {
-            background: #614035;
-            color: white;
-        }
-
-        /* =========================
-           PRODUCT GRID
-        ========================= */
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-            gap: 20px;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            transition: 0.2s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 18px rgba(0,0,0,0.15);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-            background: #eee;
-        }
-
-        .product-content {
-            padding: 16px;
-        }
-
-        .product-name {
-            font-size: 19px;
-            font-weight: bold;
-            margin-bottom: 7px;
-            color: #614035;
-        }
-
-        .product-category {
-            font-size: 13px;
-            color: #777;
-            margin-bottom: 10px;
-        }
-
-        .product-price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #614035;
-        }
-
-        .product-stock {
-            font-size: 13px;
-            color: #777;
-            margin-top: 5px;
-            margin-bottom: 12px;
-        }
-
-        .add-cart-btn {
-            width: 100%;
-            border: none;
-            background: #614035;
-            color: white;
-            padding: 10px;
-            border-radius: 7px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .add-cart-btn:hover {
-            background: #4a2f26;
-        }
-
-        .add-cart-btn:disabled {
-            background: #aaa;
-            cursor: not-allowed;
-        }
-
-        /* =========================
-           NO PRODUCT
-        ========================= */
-
-        .no-product {
-            background: white;
-            padding: 50px;
-            text-align: center;
-            border-radius: 12px;
-            color: #777;
-        }
-
-        .no-product i {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-
-        /* =========================
-           CART
-        ========================= */
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding: 15px 0;
-        }
-
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-
-        .cart-item-name {
-            font-weight: bold;
-        }
-
-        .cart-item-price {
-            color: #614035;
-            font-weight: bold;
-        }
-
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quantity-control button {
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: #614035;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .quantity-control span {
-            min-width: 25px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .remove-btn {
-            border: none;
-            background: transparent;
-            color: #dc3545;
-            font-size: 18px;
-        }
-
-        .cart-total {
-            border-top: 2px solid #614035;
-            padding-top: 15px;
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            margin-top: 15px;
-            border: none;
-            background: #614035;
-            color: white;
-            padding: 12px;
-            border-radius: 7px;
-            font-weight: bold;
-        }
-
-        .checkout-btn:hover {
-            background: #4a2f26;
-        }
-
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 768px) {
-
-            .shop-header {
-                padding: 15px;
-            }
-
-            .shop-title {
-                font-size: 20px;
-            }
-
-            .customer-info {
-                gap: 5px;
-            }
-
-            .customer-box {
-                display: none;
-            }
-
-            .container-shop {
-                width: 92%;
-            }
-
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 500px) {
-
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .product-image { width: 100%; height: 180px; object-fit: cover; }
+        .product-content { padding: 15px; }
+        .product-name { font-size: 18px; font-weight: bold; color: #614035; }
+        .product-price { font-size: 18px; font-weight: bold; color: #614035; margin: 8px 0; }
+        .add-cart-btn { width: 100%; border: none; background: #614035; color: white; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding: 10px 0; }
+        .cart-total { border-top: 2px solid #614035; padding-top: 10px; margin-top: 15px; display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; }
+        .checkout-btn { width: 100%; border: none; background: #614035; color: white; padding: 10px; border-radius: 6px; font-weight: bold; }
     </style>
 </head>
-
 <body>
 
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<!-- NAVIGATION MENU (លាក់ ឬ បង្ហាញ តាម ROLE) -->
+<nav class="main-nav" id="mainNavigation" style="display: none;">
+    <a href="dashboard.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a href="inventory.html"><i class="bi bi-box-seam"></i> Inventory</a>
+    <a href="customers.html"><i class="bi bi-people"></i> Customers</a>
+    <a href="orders.html"><i class="bi bi-receipt"></i> Orders</a>
+    <a href="shop.html" class="active"><i class="bi bi-shop"></i> Shop</a>
+</nav>
 
 <header class="shop-header">
-
     <div class="shop-title">
-        <i class="bi bi-shop"></i>
-        NitaNit Restaurant
+        <i class="bi bi-shop"></i> NitaNit Restaurant
     </div>
 
-    <div class="customer-info">
-
-        <!-- Logged In Customer -->
-
-        <div class="customer-box">
-
+    <div class="header-right">
+        <!-- 1. បង្ហាញសម្រាប់ Role: "User" ឬ "Customer" -->
+        <div class="customer-display-box" id="customerHeaderBox" style="display: none;">
             <small>Logged In Customer</small>
-
-            <span id="customerName">
-                Guest
-            </span>
-
-            <span id="customerId">
-                -
-            </span>
-
+            <span id="customerName">Guest</span>
+            <span id="customerId"></span>
         </div>
 
+        <!-- 2. បង្ហាញសម្រាប់ Role: "Admin" ឬ "Cashier" -->
+        <div class="staff-select-box" id="staffHeaderBox" style="display: none;">
+            <label><i class="bi bi-person-check"></i> Select Customer:</label>
+            <select id="headerCustomerSelect" onchange="onHeaderCustomerChange(this)">
+                <option value="WALK_IN">Walk-in Customer</option>
+            </select>
+        </div>
 
         <!-- Cart Button -->
-
-        <button
-            class="cart-button"
-            onclick="openCart()">
-
-            <i class="bi bi-cart3"></i>
-
-            Cart
-
-            <span id="cartCount">
-                0
-            </span>
-
+        <button class="cart-button" onclick="openCart()">
+            <i class="bi bi-cart3"></i> Cart <span id="cartCount">0</span>
         </button>
-
     </div>
-
 </header>
 
-
-<!-- =====================================================
-     MAIN SHOP
-===================================================== -->
-
 <div class="container-shop">
-
-    <h1 class="page-title">
-        Our Menu
-    </h1>
-
-    <p class="page-subtitle">
-        Choose your favorite food and add it to your cart.
-    </p>
-
-
-    <!-- =================================================
-         SEARCH + CATEGORY
-    ================================================= -->
+    <h1 class="page-title">Our Menu</h1>
 
     <div class="filter-area">
-
-        <!-- Search -->
-
-        <div class="search-box">
-
-            <i class="bi bi-search"></i>
-
-            <input
-                type="text"
-                id="searchInput"
-                class="form-control"
-                placeholder="Search food..."
-                oninput="filterProducts()">
-
-        </div>
-
-
-        <!-- Categories -->
-
-        <div
-            class="category-buttons"
-            id="categoryButtons">
-
-        </div>
-
+        <input type="text" id="searchInput" class="form-control" placeholder="Search food..." oninput="filterProducts()">
+        <div class="category-buttons" id="categoryButtons"></div>
     </div>
 
-
-    <!-- =================================================
-         PRODUCTS
-    ================================================= -->
-
-    <div
-        class="product-grid"
-        id="productGrid">
-
-    </div>
-
+    <div class="product-grid" id="productGrid"></div>
 </div>
 
-
-<!-- =====================================================
-     CART MODAL
-===================================================== -->
-
-<div
-    class="modal fade"
-    id="cartModal"
-    tabindex="-1">
-
+<!-- CART MODAL -->
+<div class="modal fade" id="cartModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-
         <div class="modal-content">
-
             <div class="modal-header">
-
-                <h5 class="modal-title">
-
-                    <i class="bi bi-cart3"></i>
-
-                    Your Cart
-
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-
-                </button>
-
+                <h5 class="modal-title"><i class="bi bi-cart3"></i> Your Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-
             <div class="modal-body">
-
-                <!-- Customer -->
-
                 <div class="alert alert-light">
-
-                    <strong>Customer:</strong>
-
-                    <span id="cartCustomerName">
-                        -
-                    </span>
-
-                    <br>
-
-                    <strong>Customer ID:</strong>
-
-                    <span id="cartCustomerId">
-                        -
-                    </span>
-
+                    <strong>Selected Customer:</strong> <span id="cartCustomerName">Guest</span>
+                    <span id="cartCustomerId"></span>
                 </div>
-
-
-                <!-- Cart Items -->
-
-                <div id="cartItems">
-
+                <div id="cartItems"></div>
+                <div id="emptyCart" class="text-center p-4" style="display:none;">Your cart is empty.</div>
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0.00</span>
                 </div>
-
-
-                <!-- Empty Cart -->
-
-                <div
-                    id="emptyCart"
-                    class="text-center p-4"
-                    style="display:none;">
-
-                    <i
-                        class="bi bi-cart-x"
-                        style="font-size:50px;">
-
-                    </i>
-
-                    <p class="mt-3">
-                        Your cart is empty.
-                    </p>
-
-                </div>
-
-
-                <!-- Total -->
-
-                <div
-                    class="cart-total">
-
-                    <span>
-                        Total:
-                    </span>
-
-                    <span id="cartTotal">
-                        $0.00
-                    </span>
-
-                </div>
-
             </div>
-
-
             <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
-
-                    Continue Shopping
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="checkout-btn"
-                    style="width:auto; margin-top:0;"
-                    onclick="checkout()">
-
-                    <i class="bi bi-check-circle"></i>
-
-                    Checkout
-
-                </button>
-
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="checkout-btn" style="width:auto;" onclick="checkout()">Checkout</button>
             </div>
-
         </div>
-
     </div>
-
 </div>
-
-
-<!-- =====================================================
-     BOOTSTRAP JS
-===================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
 <script>
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
 let products = [];
-
 let cart = [];
-
 let selectedCategory = "All";
-
 let currentUser = null;
-
-
-/* =====================================================
-   PAGE LOAD
-===================================================== */
+let selectedCustomerForOrder = { id: "WALK_IN", name: "Walk-in Customer" };
 
 document.addEventListener("DOMContentLoaded", function () {
-
     checkLogin();
-
-    loadCurrentUser();
-
+    setupHeaderView();
     loadProducts();
-
     loadCart();
-
     createCategories();
-
     displayProducts();
-
     updateCartCount();
-
 });
 
-
-/* =====================================================
-   CHECK LOGIN
-===================================================== */
-
 function checkLogin() {
-
-    let savedUser =
-        localStorage.getItem("currentUser");
-
+    let savedUser = localStorage.getItem("currentUser");
     if (!savedUser) {
-
         alert("Please login first!");
-
         window.location.href = "login.html";
-
-        return;
-
     }
-
 }
 
-
 /* =====================================================
-   LOAD CURRENT USER
+   HEADER & NAVIGATION CONTROL BASED ON ROLE
 ===================================================== */
+function setupHeaderView() {
+    let savedUser = localStorage.getItem("currentUser");
+    if (!savedUser) return;
 
-function loadCurrentUser() {
+    currentUser = JSON.parse(savedUser);
+    let rawRole = currentUser.selectedRole || currentUser.role || "";
+    let role = rawRole.toLowerCase().trim();
 
-    let savedUser =
-        localStorage.getItem("currentUser");
+    const customerHeaderBox = document.getElementById("customerHeaderBox");
+    const staffHeaderBox = document.getElementById("staffHeaderBox");
+    const mainNavigation = document.getElementById("mainNavigation");
 
-    if (!savedUser) {
+    // ១. បើជា Admin ឬ Cashier 
+    if (role === "admin" || role === "cashier") {
+        if (mainNavigation) mainNavigation.style.display = "flex";
+        if (customerHeaderBox) customerHeaderBox.style.display = "none";
+        if (staffHeaderBox) staffHeaderBox.style.display = "flex";
+        populateCustomerDropdown();
+    } 
+    // ២. បើជា User ឬ Customer
+    else {
+        if (mainNavigation) mainNavigation.style.display = "none";
+        if (customerHeaderBox) customerHeaderBox.style.display = "block";
+        if (staffHeaderBox) staffHeaderBox.style.display = "none";
 
-        return;
+        let nameEl = document.getElementById("customerName");
+        let idEl = document.getElementById("customerId");
 
+        if (nameEl) nameEl.textContent = currentUser.name || "Customer";
+        if (idEl) idEl.textContent = currentUser.id ? `(${currentUser.id})` : "";
+
+        selectedCustomerForOrder = {
+            id: currentUser.id || "CUST-00",
+            name: currentUser.name || "Customer"
+        };
     }
-
-    currentUser =
-        JSON.parse(savedUser);
-
-
-    /* Display Customer Name */
-
-    document.getElementById("customerName").textContent =
-        currentUser.name || "Customer";
-
-
-    /* Display Customer ID */
-
-    document.getElementById("customerId").textContent =
-        currentUser.id || "-";
-
-
-    /* Cart Customer */
-
-    document.getElementById("cartCustomerName").textContent =
-        currentUser.name || "Customer";
-
-
-    document.getElementById("cartCustomerId").textContent =
-        currentUser.id || "-";
-
+    updateCartCustomerDisplay();
 }
 
+function populateCustomerDropdown() {
+    const selectEl = document.getElementById("headerCustomerSelect");
+    if (!selectEl) return;
+
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    selectEl.innerHTML = '<option value="WALK_IN">-- Walk-in Customer (ភ្ញៀវផ្ទាល់) --</option>';
+
+    customers.forEach(cust => {
+        let opt = document.createElement("option");
+        opt.value = cust.id;
+        opt.textContent = `${cust.name} (${cust.id})`;
+        selectEl.appendChild(opt);
+    });
+}
+
+function onHeaderCustomerChange(selectEl) {
+    let customers = JSON.parse(localStorage.getItem("customers")) || [];
+    let found = customers.find(c => String(c.id) === String(selectEl.value));
+
+    if (found) {
+        selectedCustomerForOrder = { id: found.id, name: found.name };
+    } else {
+        selectedCustomerForOrder = { id: "WALK_IN", name: "Walk-in Customer" };
+    }
+    updateCartCustomerDisplay();
+}
+
+function updateCartCustomerDisplay() {
+    let cartNameEl = document.getElementById("cartCustomerName");
+    let cartIdEl = document.getElementById("cartCustomerId");
+
+    if (cartNameEl) cartNameEl.textContent = selectedCustomerForOrder.name;
+    if (cartIdEl) {
+        cartIdEl.textContent = selectedCustomerForOrder.id !== "WALK_IN" ? `(${selectedCustomerForOrder.id})` : "";
+    }
+}
 
 /* =====================================================
-   LOAD PRODUCTS
+   ADD TO CART & SHOP LOGIC
 ===================================================== */
+function addToCart(productId) {
+    let product = products.find(p => String(p.productId || p.id) === String(productId));
+    if (!product) return;
+
+    let stock = Number(product.stock) || 0;
+    if (stock <= 0) {
+        alert("Out of stock!");
+        return;
+    }
+
+    let cartItem = cart.find(item => String(item.productId) === String(productId));
+    if (cartItem) {
+        if (cartItem.quantity >= stock) {
+            alert("Not enough stock!");
+            return;
+        }
+        cartItem.quantity++;
+    } else {
+        cart.push({
+            productId: product.productId || product.id,
+            productName: product.productName,
+            price: Number(product.price) || 0,
+            quantity: 1
+        });
+    }
+
+    saveCart();
+    updateCartCount();
+    alert(product.productName + " added!");
+}
 
 function loadProducts() {
-
-    let savedProducts =
-        localStorage.getItem("products");
-
-
-    if (savedProducts) {
-
-        products =
-            JSON.parse(savedProducts);
-
-    } else {
-
-        products = [];
-
-    }
-
+    products = JSON.parse(localStorage.getItem("products")) || [];
 }
-
-
-/* =====================================================
-   LOAD CART
-===================================================== */
 
 function loadCart() {
-
-    let savedCart =
-        localStorage.getItem("cart");
-
-
-    if (savedCart) {
-
-        cart =
-            JSON.parse(savedCart);
-
-    } else {
-
-        cart = [];
-
-    }
-
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
 }
-
-
-/* =====================================================
-   SAVE CART
-===================================================== */
 
 function saveCart() {
-
-    localStorage.setItem(
-        "cart",
-        JSON.stringify(cart)
-    );
-
+    localStorage.setItem("cart", JSON.stringify(cart));
 }
-
-
-/* =====================================================
-   CREATE CATEGORIES
-===================================================== */
 
 function createCategories() {
+    let categoryContainer = document.getElementById("categoryButtons");
+    if (!categoryContainer) return;
 
-    let categoryContainer =
-        document.getElementById("categoryButtons");
+    let categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
-
-    let categories = [];
-
-
-    products.forEach(function (product) {
-
-        if (
-            product.category &&
-            !categories.includes(product.category)
-        ) {
-
-            categories.push(product.category);
-
-        }
-
+    categoryContainer.innerHTML = `<button class="category-btn active" onclick="selectCategory('All')">All</button>`;
+    categories.forEach(cat => {
+        categoryContainer.innerHTML += `<button class="category-btn" onclick="selectCategory('${cat}')">${cat}</button>`;
     });
-
-
-    categoryContainer.innerHTML = "";
-
-
-    /* ALL BUTTON */
-
-    let allButton =
-        document.createElement("button");
-
-    allButton.className =
-        "category-btn active";
-
-    allButton.textContent =
-        "All";
-
-    allButton.onclick = function () {
-
-        selectCategory("All");
-
-    };
-
-    categoryContainer.appendChild(allButton);
-
-
-    /* CATEGORY BUTTONS */
-
-    categories.forEach(function (category) {
-
-        let button =
-            document.createElement("button");
-
-        button.className =
-            "category-btn";
-
-        button.textContent =
-            category;
-
-        button.onclick = function () {
-
-            selectCategory(category);
-
-        };
-
-        categoryContainer.appendChild(button);
-
-    });
-
 }
 
-
-/* =====================================================
-   SELECT CATEGORY
-===================================================== */
-
-function selectCategory(category) {
-
-    selectedCategory =
-        category;
-
-
-    let buttons =
-        document.querySelectorAll(".category-btn");
-
-
-    buttons.forEach(function (button) {
-
-        button.classList.remove("active");
-
-        if (button.textContent === category) {
-
-            button.classList.add("active");
-
-        }
-
+function selectCategory(cat) {
+    selectedCategory = cat;
+    document.querySelectorAll(".category-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.textContent === cat);
     });
-
-
     displayProducts();
-
 }
 
-
-/* =====================================================
-   FILTER PRODUCTS
-===================================================== */
-
-function filterProducts() {
-
-    displayProducts();
-
-}
-
-
-/* =====================================================
-   DISPLAY PRODUCTS
-===================================================== */
+function filterProducts() { displayProducts(); }
 
 function displayProducts() {
-
-    let productGrid =
-        document.getElementById("productGrid");
-
-
-    let search =
-        document
-        .getElementById("searchInput")
-        .value
-        .toLowerCase()
-        .trim();
-
-
-    let filteredProducts =
-        products.filter(function (product) {
-
-
-            /* Check Category */
-
-            let categoryMatch =
-                selectedCategory === "All" ||
-                product.category === selectedCategory;
-
-
-            /* Check Search */
-
-            let nameMatch =
-                (product.productName || "")
-                .toLowerCase()
-                .includes(search);
-
-
-            return categoryMatch && nameMatch;
-
-        });
-
-
-    productGrid.innerHTML = "";
-
-
-    /* No Product */
-
-    if (filteredProducts.length === 0) {
-
-        productGrid.innerHTML = `
-
-            <div class="no-product">
-
-                <i class="bi bi-search"></i>
-
-                <h4>No products found</h4>
-
-                <p>
-                    There are no products matching your search.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    /* Display Product */
-
-    filteredProducts.forEach(function (product) {
-
-        let stock =
-            Number(product.stock) || 0;
-
-
-        let price =
-            Number(product.price) || 0;
-
-
-        let image =
-            product.image ||
-            "https://via.placeholder.com/400x300?text=No+Image";
-
-
-        let isAvailable =
-            product.status === "Available" &&
-            stock > 0;
-
-
-        let card =
-            document.createElement("div");
-
-        card.className =
-            "product-card";
-
-
-        card.innerHTML = `
-
-            <img
-                src="${image}"
-                class="product-image"
-                alt="${product.productName || "Product"}"
-                onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
-
-
-            <div class="product-content">
-
-                <div class="product-name">
-
-                    ${product.productName || "Unnamed Product"}
-
-                </div>
-
-
-                <div class="product-category">
-
-                    <i class="bi bi-tag"></i>
-
-                    ${product.category || "No Category"}
-
-                </div>
-
-
-                <div class="product-price">
-
-                    $${price.toFixed(2)}
-
-                </div>
-
-
-                <div class="product-stock">
-
-                    ${
-                        stock > 0
-                        ? "Stock: " + stock
-                        : "Out of Stock"
-                    }
-
-                </div>
-
-
-                <button
-                    class="add-cart-btn"
-                    onclick="addToCart('${product.productId || product.id}')"
-                    ${!isAvailable ? "disabled" : ""}>
-
-                    <i class="bi bi-cart-plus"></i>
-
-                    ${
-                        isAvailable
-                        ? "Add to Cart"
-                        : "Unavailable"
-                    }
-
-                </button>
-
-            </div>
-
-        `;
-
-
-        productGrid.appendChild(card);
-
+    let grid = document.getElementById("productGrid");
+    if (!grid) return;
+
+    let searchInput = document.getElementById("searchInput");
+    let search = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+    let filtered = products.filter(p => {
+        let catMatch = selectedCategory === "All" || p.category === selectedCategory;
+        let nameMatch = (p.productName || "").toLowerCase().includes(search);
+        return catMatch && nameMatch;
     });
 
+    grid.innerHTML = "";
+    filtered.forEach(p => {
+        let price = Number(p.price) || 0;
+        let img = p.image || "https://via.placeholder.com/200";
+        grid.innerHTML += `
+            <div class="product-card">
+                <img src="${img}" class="product-image" onerror="this.src='https://via.placeholder.com/200'">
+                <div class="product-content">
+                    <div class="product-name">${p.productName}</div>
+                    <div class="product-price">$${price.toFixed(2)}</div>
+                    <button class="add-cart-btn" onclick="addToCart('${p.productId || p.id}')">Add to Cart</button>
+                </div>
+            </div>`;
+    });
 }
-
-
-/* =====================================================
-   ADD TO CART
-===================================================== */
-
-function addToCart(productId) {
-
-    if (!currentUser) {
-
-        alert("Please login first!");
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    let product =
-        products.find(function (p) {
-
-            return String(p.productId || p.id) ===
-                   String(productId);
-
-        });
-
-
-    if (!product) {
-
-        alert("Product not found!");
-
-        return;
-
-    }
-
-
-    let stock =
-        Number(product.stock) || 0;
-
-
-    if (
-        product.status !== "Available" ||
-        stock <= 0
-    ) {
-
-        alert("This product is unavailable!");
-
-        return;
-
-    }
-
-
-    /* Check if already in cart */
-
-    let cartItem =
-        cart.find(function (item) {
-
-            return String(item.productId) ===
-                   String(productId);
-
-        });
-
-
-    if (cartItem) {
-
-        if (cartItem.quantity >= stock) {
-
-            alert("Not enough stock!");
-
-            return;
-
-        }
-
-
-        cartItem.quantity++;
-
-    } else {
-
-        cart.push({
-
-            productId:
-                product.productId || product.id,
-
-            productName:
-                product.productName,
-
-            price:
-                Number(product.price) || 0,
-
-            quantity: 1
-
-        });
-
-    }
-
-
-    saveCart();
-
-    updateCartCount();
-
-    alert(
-        product.productName +
-        " added to cart!"
-    );
-
-}
-
-
-/* =====================================================
-   UPDATE CART COUNT
-===================================================== */
 
 function updateCartCount() {
-
-    let count =
-        0;
-
-
-    cart.forEach(function (item) {
-
-        count +=
-            Number(item.quantity) || 0;
-
-    });
-
-
-    document.getElementById("cartCount")
-        .textContent = count;
-
+    let count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    let cartCountEl = document.getElementById("cartCount");
+    if (cartCountEl) cartCountEl.textContent = count;
 }
-
-
-/* =====================================================
-   OPEN CART
-===================================================== */
 
 function openCart() {
-
-    if (!currentUser) {
-
-        alert("Please login first!");
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
     displayCart();
-
-
-    let modal =
-        new bootstrap.Modal(
-            document.getElementById("cartModal")
-        );
-
-
-    modal.show();
-
+    new bootstrap.Modal(document.getElementById("cartModal")).show();
 }
 
-
 /* =====================================================
-   DISPLAY CART
+   CART MODAL DISPLAY WITH (+, -, DELETE) BUTTONS
 ===================================================== */
-
 function displayCart() {
-
-    let cartItems =
-        document.getElementById("cartItems");
-
-
-    let emptyCart =
-        document.getElementById("emptyCart");
-
-
-    let cartTotal =
-        document.getElementById("cartTotal");
-
+    let cartItems = document.getElementById("cartItems");
+    let totalEl = document.getElementById("cartTotal");
+    if (!cartItems || !totalEl) return;
 
     cartItems.innerHTML = "";
-
-
-    /* Empty Cart */
+    let total = 0;
 
     if (cart.length === 0) {
-
-        emptyCart.style.display =
-            "block";
-
-        cartTotal.textContent =
-            "$0.00";
-
+        document.getElementById("emptyCart").style.display = "block";
+        totalEl.textContent = "$0.00";
         return;
-
     }
+    document.getElementById("emptyCart").style.display = "none";
 
-
-    emptyCart.style.display =
-        "none";
-
-
-    let total =
-        0;
-
-
-    cart.forEach(function (item, index) {
-
-        let itemTotal =
-            item.price *
-            item.quantity;
-
-
-        total +=
-            itemTotal;
-
-
-        let div =
-            document.createElement("div");
-
-        div.className =
-            "cart-item";
-
-
-        div.innerHTML = `
-
-            <div>
-
-                <div class="cart-item-name">
-
-                    ${item.productName}
-
+    cart.forEach((item) => {
+        let sub = item.price * item.quantity;
+        total += sub;
+        cartItems.innerHTML += `
+            <div class="cart-item d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div style="flex: 2;">
+                    <div class="fw-bold">${item.productName}</div>
+                    <small class="text-muted">$${item.price.toFixed(2)}</small>
                 </div>
 
-                <div class="cart-item-price">
-
-                    $${Number(item.price).toFixed(2)}
-
+                <!-- ប៊ូតុង - និង + -->
+                <div class="d-flex align-items-center gap-2" style="flex: 1.2;">
+                    <button class="btn btn-sm btn-outline-secondary px-2" onclick="changeQuantity('${item.productId}', -1)">-</button>
+                    <span class="fw-bold">${item.quantity}</span>
+                    <button class="btn btn-sm btn-outline-secondary px-2" onclick="changeQuantity('${item.productId}', 1)">+</button>
                 </div>
 
-            </div>
+                <div style="flex: 1;" class="text-end fw-bold">$${sub.toFixed(2)}</div>
 
-
-            <div class="quantity-control">
-
-                <button
-                    onclick="changeQuantity(${index}, -1)">
-
-                    -
-
-                </button>
-
-
-                <span>
-
-                    ${item.quantity}
-
-                </span>
-
-
-                <button
-                    onclick="changeQuantity(${index}, 1)">
-
-                    +
-
-                </button>
-
-            </div>
-
-
-            <div>
-
-                <strong>
-
-                    $${itemTotal.toFixed(2)}
-
-                </strong>
-
-            </div>
-
-
-            <button
-                class="remove-btn"
-                onclick="removeFromCart(${index})">
-
-                <i class="bi bi-trash"></i>
-
-            </button>
-
-        `;
-
-
-        cartItems.appendChild(div);
-
+                <!-- ប៊ូតុង លុប -->
+                <div style="flex: 0.8;" class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart('${item.productId}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>`;
     });
-
-
-    cartTotal.textContent =
-        "$" + total.toFixed(2);
-
+    totalEl.textContent = "$" + total.toFixed(2);
 }
 
+// Function កែប្រែចំនួនទំនិញ (+ / -)
+function changeQuantity(productId, amount) {
+    let cartItem = cart.find(i => String(i.productId) === String(productId));
+    if (!cartItem) return;
 
-/* =====================================================
-   CHANGE QUANTITY
-===================================================== */
+    let product = products.find(p => String(p.productId || p.id) === String(productId));
+    let stock = product ? (Number(product.stock) || 0) : 999;
 
-function changeQuantity(index, amount) {
-
-    let item =
-        cart[index];
-
-
-    if (!item) {
-
-        return;
-
-    }
-
-
-    let product =
-        products.find(function (p) {
-
-            return String(p.productId || p.id) ===
-                   String(item.productId);
-
-        });
-
-
-    let stock =
-        product
-        ? Number(product.stock) || 0
-        : 0;
-
-
-    let newQuantity =
-        item.quantity + amount;
-
-
-    if (newQuantity <= 0) {
-
-        cart.splice(index, 1);
-
-    } else if (newQuantity > stock) {
-
+    if (amount > 0 && cartItem.quantity >= stock) {
         alert("Not enough stock!");
-
         return;
+    }
 
+    cartItem.quantity += amount;
+
+    if (cartItem.quantity <= 0) {
+        removeFromCart(productId);
     } else {
-
-        item.quantity =
-            newQuantity;
-
+        saveCart();
+        displayCart();
+        updateCartCount();
     }
-
-
-    saveCart();
-
-    updateCartCount();
-
-    displayCart();
-
 }
 
-
-/* =====================================================
-   REMOVE FROM CART
-===================================================== */
-
-function removeFromCart(index) {
-
-    if (
-        !confirm(
-            "Remove this product from cart?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
-    cart.splice(index, 1);
-
-
+// Function លុបទំនិញចេញពី Cart
+function removeFromCart(productId) {
+    cart = cart.filter(i => String(i.productId) !== String(productId));
     saveCart();
-
-    updateCartCount();
-
     displayCart();
-
+    updateCartCount();
 }
-
-
-/* =====================================================
-   CHECKOUT
-===================================================== */
 
 function checkout() {
+    if (cart.length === 0) return alert("Cart is empty!");
 
-    if (!currentUser) {
-
-        alert("Please login first!");
-
-        window.location.href =
-            "login.html";
-
-        return;
-
-    }
-
-
-    if (cart.length === 0) {
-
-        alert("Your cart is empty!");
-
-        return;
-
-    }
-
-
-    /* Check Stock Before Checkout */
-
-    for (
-        let i = 0;
-        i < cart.length;
-        i++
-    ) {
-
-        let item =
-            cart[i];
-
-
-        let product =
-            products.find(function (p) {
-
-                return String(p.productId || p.id) ===
-                       String(item.productId);
-
-            });
-
-
-        if (!product) {
-
-            alert(
-                item.productName +
-                " is no longer available."
-            );
-
-            return;
-
+    let currentProducts = JSON.parse(localStorage.getItem("products")) || [];
+    
+    for (let item of cart) {
+        let prod = currentProducts.find(p => String(p.productId || p.id) === String(item.productId));
+        if (prod) {
+            let currentStock = Number(prod.stock) || 0;
+            if (currentStock < item.quantity) {
+                alert(`ទំនិញ "${item.productName}" មិនមានស្តុកគ្រប់គ្រាន់ទេ! (នៅសល់: ${currentStock})`);
+                return;
+            }
+            prod.stock = currentStock - item.quantity;
         }
-
-
-        let stock =
-            Number(product.stock) || 0;
-
-
-        if (
-            product.status !== "Available" ||
-            stock < item.quantity
-        ) {
-
-            alert(
-                "Not enough stock for " +
-                item.productName
-            );
-
-            return;
-
-        }
-
     }
 
-
-    /* Calculate Total */
-
-    let total =
-        0;
-
-
-    cart.forEach(function (item) {
-
-        total +=
-            Number(item.price) *
-            Number(item.quantity);
-
-    });
-
-
-    /* Today's Date */
-
-    let today =
-        new Date()
-        .toISOString()
-        .split("T")[0];
-
-
-    /* Customer ID from Login */
-
-    let customerId =
-        currentUser.id;
-
-
-    /* Create Order */
+    let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     let order = {
-
-        id:
-            "ORD-" +
-            Date.now(),
-
-        customerId:
-            customerId,
-
-        customerName:
-            currentUser.name,
-
-        productsIds:
-            cart.map(function (item) {
-
-                return item.productId;
-
-            }),
-
-        quantities:
-            cart.map(function (item) {
-
-                return item.quantity;
-
-            }),
-
-        prices:
-            cart.map(function (item) {
-
-                return item.price;
-
-            }),
-
-        totalPrice:
-            total,
-
-        dateOrder:
-            today
-
+        id: "ORD-" + Date.now(),
+        customerId: selectedCustomerForOrder.id,
+        customerName: selectedCustomerForOrder.name,
+        items: cart.map(item => ({
+            productId: item.productId,
+            productName: item.productName,
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.price * item.quantity
+        })),
+        totalPrice: total,
+        status: "Pending",
+        dateOrder: new Date().toISOString().split("T")[0],
+        timeOrder: new Date().toLocaleTimeString()
     };
 
-
-    /* Get Existing Orders */
-
-    let orders =
-        JSON.parse(
-            localStorage.getItem("orders")
-        ) || [];
-
-
-    /* Add Order */
-
+    let orders = JSON.parse(localStorage.getItem("orders")) || [];
     orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    localStorage.setItem("products", JSON.stringify(currentProducts));
 
-
-    /* Save Orders */
-
-    localStorage.setItem(
-        "orders",
-        JSON.stringify(orders)
-    );
-
-
-    /* =================================================
-       UPDATE PRODUCT STOCK
-    ================================================= */
-
-    cart.forEach(function (item) {
-
-        let product =
-            products.find(function (p) {
-
-                return String(p.productId || p.id) ===
-                       String(item.productId);
-
-            });
-
-
-        if (product) {
-
-            product.stock =
-                Number(product.stock) -
-                Number(item.quantity);
-
-
-            if (product.stock <= 0) {
-
-                product.stock = 0;
-
-                product.status =
-                    "Unavailable";
-
-            }
-
-        }
-
-    });
-
-
-    /* Save Updated Products */
-
-    localStorage.setItem(
-        "products",
-        JSON.stringify(products)
-    );
-
-
-    /* =================================================
-       UPDATE CUSTOMER TOTAL ORDERS
-    ================================================= */
-
-    let customers =
-        JSON.parse(
-            localStorage.getItem("customers")
-        ) || [];
-
-
-    let customerIndex =
-        customers.findIndex(function (customer) {
-
-            return String(customer.id) ===
-                   String(customerId);
-
-        });
-
-
-    if (customerIndex !== -1) {
-
-        customers[customerIndex].totalOrders =
-            Number(
-                customers[customerIndex].totalOrders || 0
-            ) + 1;
-
-
-        localStorage.setItem(
-            "customers",
-            JSON.stringify(customers)
-        );
-
-    }
-
-
-    /* Clear Cart */
+    alert("Order successful!\nCustomer: " + selectedCustomerForOrder.name);
 
     cart = [];
-
-
     saveCart();
-
     updateCartCount();
-
-
-    /* Close Modal */
-
-    let modalElement =
-        document.getElementById("cartModal");
-
-
-    let modal =
-        bootstrap.Modal.getInstance(
-            modalElement
-        );
-
-
-    if (modal) {
-
-        modal.hide();
-
-    }
-
-
-    /* Refresh Products */
-
     loadProducts();
-
-    createCategories();
-
     displayProducts();
 
+    let role = ((currentUser && (currentUser.selectedRole || currentUser.role)) || "").toLowerCase().trim();
+    if (role === "admin" || role === "cashier") {
+        let selectEl = document.getElementById("headerCustomerSelect");
+        if (selectEl) {
+            selectEl.value = "WALK_IN";
+            onHeaderCustomerChange(selectEl);
+        }
+    }
 
-    /* Success */
-
-    alert(
-        "Order placed successfully!\n\n" +
-        "Order ID: " + order.id +
-        "\nTotal: $" + total.toFixed(2)
-    );
-
+    let modalEl = document.getElementById("cartModal");
+    let modalInstance = bootstrap.Modal.getInstance(modalEl);
+    if (modalInstance) modalInstance.hide();
 }
-
-
-/* =====================================================
-   AUTO REFRESH PRODUCTS
-   Useful when Inventory changes stock
-===================================================== */
-
-setInterval(function () {
-
-    loadProducts();
-
-    createCategories();
-
-    displayProducts();
-
-}, 1000);
-
-
-/* =====================================================
-   AUTO SAVE CART
-===================================================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        saveCart();
-
-    }
-);
-
 </script>
-
 </body>
 </html>
