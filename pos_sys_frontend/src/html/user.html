@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NitaNit Restaurant - Home</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            width: 100%;
+            height: 55px;
+            background: white;
+            color: #333;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 20px;
+            font-weight: bold;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* USER AREA */
+        .user-area {
+            position: absolute;
+            top: 8px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 110;
+        }
+
+        .user-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #614035;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #4a2f26;
+        }
+
+        /* BACKGROUND CAROUSEL SLIDER */
+        .bg-slider {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 55px);
+            z-index: 1;
+        }
+
+        .carousel, .carousel-inner, .carousel-item {
+            height: 100%;
+        }
+
+        .slide-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.45); /* Darkens images for clear text readability */
+        }
+
+        /* HERO CONTENT OVERLAY */
+        .hero {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 55px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            pointer-events: none; /* Allows click-through to left/right arrows outside text container */
+        }
+
+        .hero-content {
+            max-width: 750px;
+            padding: 30px;
+            margin-top: -30px;
+            pointer-events: auto; /* Re-enables button clicks */
+        }
+
+        /* JUMPING / BOUNCING TITLE ANIMATION */
+        .hero-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #ffffff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            display: inline-block;
+            animation: bounceJump 1.8s infinite ease-in-out;
+        }
+
+        @keyframes bounceJump {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            color: #e2e2e2;
+            margin-bottom: 18px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-description {
+            font-size: 17px;
+            margin-bottom: 30px;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        /* SHOP BUTTON */
+        .shop-btn {
+            border: none;
+            background: #009f63;
+            color: white;
+            padding: 12px 30px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .shop-btn:hover {
+            background: #008653;
+            transform: translateY(-2px);
+        }
+
+        .shop-btn i {
+            margin-right: 7px;
+        }
+
+        /* SLIDER CONTROL BUTTONS */
+        .carousel-control-prev,
+        .carousel-control-next {
+            z-index: 30;
+            width: 10%;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            opacity: 1;
+        }
+
+        /* Custom Arrow Styling */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 3rem;
+            height: 3rem;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 50%;
+            background-size: 50%;
+        }
+
+        /* MOBILE RESPONSIVENESS */
+        @media (max-width: 768px) {
+            .top-bar {
+                font-size: 17px;
+            }
+
+            .user-area {
+                right: 10px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 34px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        Restaurant Management System
+    </div>
+
+    <!-- USER INFORMATION & LOGOUT -->
+    <div class="user-area">
+        <span class="user-name" id="userName"></span>
+        <button class="logout-btn" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+        </button>
+    </div>
+
+    <!-- BACKGROUND IMAGE SLIDER (3 SLIDING PICTURES) -->
+    <div class="bg-slider">
+        <div id="bgCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-touch="true" data-bs-interval="4000">
+            <!-- Indicators (Bottom Dots) -->
+            <div class="carousel-indicators" style="z-index: 30;">
+                <button type="button" data-bs-target="#bgCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#bgCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#bgCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+
+            <!-- Slides List -->
+            <div class="carousel-inner">
+                <!-- Picture 1 -->
+                <div class="carousel-item active">
+                    <img src="https://hips.hearstapps.com/hmg-prod/images/bangkok-photo-evan-sung-650cd604084a4.jpg" class="slide-img" alt="Restaurant Interior 1">
+                </div>
+                <!-- Picture 2 -->
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1920&auto=format&fit=crop" class="slide-img" alt="Restaurant Interior 2">
+                </div>
+                <!-- Picture 3 -->
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1920&auto=format&fit=crop" class="slide-img" alt="Restaurant Interior 3">
+                </div>
+            </div>
+
+            <!-- Slide Left Control Button -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#bgCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous (Slide Left)</span>
+            </button>
+
+            <!-- Slide Right Control Button -->
+            <button class="carousel-control-next" type="button" data-bs-target="#bgCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next (Slide Right)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- HERO SECTION OVERLAY -->
+    <main class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Welcome to<br>
+                NitaNit Restaurant
+            </h1>
+            <p class="hero-description">
+                Order your daily fresh meals delivered to your doorstep.
+            </p>
+            <button class="shop-btn" onclick="goToShop()">
+                <i class="bi bi-cart3"></i>
+                Shop Now
+            </button>
+        </div>
+    </main>
+
+    <!-- Bootstrap Bundle JS (Enables Slide Behaviors & Controls) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        function checkLogin() {
+            let savedUser = localStorage.getItem("currentUser");
+
+            /* Redirect if user is not logged in */
+            if (!savedUser) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            let currentUser = JSON.parse(savedUser);
+            let selectedRole = (currentUser.selectedRole || currentUser.role || "").toLowerCase().trim();
+
+            /* Non-User roles are redirected to staff dashboard */
+            if (selectedRole && selectedRole !== "user" && selectedRole !== "customer") {
+                window.location.href = "index.html";
+                return;
+            }
+
+            /* Display Logged-in User Name */
+            let userNameEl = document.getElementById("userName");
+            if (userNameEl) {
+                userNameEl.textContent = currentUser.name || "User";
+            }
+        }
+
+        function goToShop() {
+            window.location.href = "shop.html";
+        }
+
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                localStorage.removeItem("currentUser");
+                window.location.href = "login.html";
+            }
+        }
+
+        /* Execute check on load */
+        checkLogin();
+    </script>
+</body>
+
+</html>

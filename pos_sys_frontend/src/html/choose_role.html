@@ -150,7 +150,7 @@
                 currentUser.role = "Admin";
                 currentUser.selectedRole = "Admin";
                 localStorage.setItem("currentUser", JSON.stringify(currentUser));
-                window.location.href = "shop.html"; // ឬ index.html តាមតម្រូវការ
+                window.location.href = "index.html"; // ឬ index.html តាមតម្រូវការ
             } else {
                 alert("Incorrect Admin password!");
             }
@@ -161,7 +161,7 @@
                 currentUser.role = "Cashier";
                 currentUser.selectedRole = "Cashier";
                 localStorage.setItem("currentUser", JSON.stringify(currentUser));
-                window.location.href = "shop.html"; // ឬ index.html តាមតម្រូវការ
+                window.location.href = "index.html"; // ឬ index.html តាមតម្រូវការ
             } else {
                 alert("Incorrect Cashier password!");
             }
@@ -174,7 +174,7 @@
             // Sync ទិន្នន័យ User នេះចូលទៅក្នុងបញ្ជី customers សម្រាប់ឱ្យ Admin/Cashier មើលឃើញក្នុង Dropdown Select
             syncUserToCustomers(currentUser);
 
-            window.location.href = "shop.html";
+            window.location.href = "user.html";
         }
     }
 
