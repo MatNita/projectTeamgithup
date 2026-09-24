@@ -1,71 +1,91 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    // GET: /api/products
     public function index()
     {
-        $products = Product::with('category')->orderBy('id', 'desc')->get();
+        $products = Product::orderBy('id', 'desc')->get();
+        
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'data' => $products
         ], 200);
     }
 
+    // POST: /api/products (ADD)
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'category_id' => 'nullable|exists:categories,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
-            'image' => 'nullable|string'
+        $request->validate([
+            'product_id'   => 'required|string',
+            'product_name' => 'required|string',
+            'category'     => 'required|string',
+            'stock'        => 'required|integer',
+            'price'        => 'required|numeric',
+            'status'       => 'required|string',
         ]);
 
-        $product = Product::create($validated);
+        $product = Product::create([
+            'product_id'   => $request->product_id,
+            'product_name' => $request->product_name,
+            'category'     => $request->category,
+            'stock'        => $request->stock,
+            'price'        => $request->price,
+            'status'       => $request->status,
+            'image'        => $request->image, // Base64 string
+        ]);
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Product created successfully',
-            'data' => $product
+            'success' => true,
+            'message' => 'Product created successfully!',
+            'data'    => $product
         ], 201);
     }
 
-    public function show(Product $product)
+    // PUT: /api/products/{id} (UPDATE)
+    public function update(Request $request, $id)
     {
-        $product->load('category');
-        return response()->json([
-            'status' => 'success',
-            'data' => $product
-        ], 200);
-    }
-    public function update(Request $request, Product $product)
-    {
-        $validated = $request->validate([
-            'category_id' => 'nullable|exists:categories,id',
-            'name' => 'sometimes|required|string|max:255',
-            'price' => 'sometimes|required|numeric|min:0',
-            'stock_quantity' => 'sometimes|required|integer|min:0',
-            'image' => 'nullable|string'
-        ]);
+        $product = Product::find($id);
 
-        $product->update($validated);
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product not found!'
+            ], 404);
+        }
+
+        $product->update($request->all());
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Product updated successfully',
-            'data' => $product
+            'success' => true,
+            'message' => 'Product updated successfully!',
+            'data'    => $product
         ], 200);
     }
 
-    public function destroy(Product $product)
+    // DELETE: /api/products/{id} (DELETE)
+    public function destroy($id)
     {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product not found!'
+            ], 404);
+        }
+
         $product->delete();
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Product deleted successfully'
+            'success' => true,
+            'message' => 'Product deleted successfully!'
         ], 200);
     }
 }

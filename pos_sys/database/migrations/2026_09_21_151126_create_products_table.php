@@ -13,18 +13,17 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('name');                       
-            $table->decimal('price', 10, 2);             
-            $table->integer('stock_quantity')->default(0);   
+            $table->string('product_id')->unique();
+            $table->string('product_name');
+            $table->string('category');
+            $table->integer('stock')->default(0);
+            $table->decimal('price', 10, 2);
             $table->string('image')->nullable();
+            $table->enum('status', ['Available', 'Unavailable'])->default('Available');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');
