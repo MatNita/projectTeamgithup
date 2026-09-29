@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    // Get all customers
     public function index()
     {
         $customers = Customer::withCount('orders as total_orders')
@@ -19,13 +20,14 @@ class CustomerController extends Controller
         ], 200);
     }
 
+    // Create customer
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|unique:customers,email',
-            'status' => 'nullable|in:active,inactive',
+            'status' => 'nullable|in:Active,Inactive',
         ]);
 
         $customer = Customer::create($validated);
@@ -37,6 +39,7 @@ class CustomerController extends Controller
         ], 201);
     }
 
+    // Get one customer
     public function show(Customer $customer)
     {
         $customer->loadCount('orders as total_orders');
@@ -47,13 +50,14 @@ class CustomerController extends Controller
         ], 200);
     }
 
+    // Update customer
     public function update(Request $request, Customer $customer)
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|unique:customers,email,' . $customer->id,
-            'status' => 'nullable|in:active,inactive',
+            'status' => 'nullable|in:Active,Inactive',
         ]);
 
         $customer->update($validated);
@@ -65,6 +69,7 @@ class CustomerController extends Controller
         ], 200);
     }
 
+    // Delete customer
     public function destroy(Customer $customer)
     {
         $customer->delete();

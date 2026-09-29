@@ -6,20 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('product_id')->unique();
-            $table->string('product_name');
+            $table->string('name');
             $table->string('category');
-            $table->integer('stock')->default(0);
+            $table->integer('stock');
             $table->decimal('price', 10, 2);
-            $table->string('image')->nullable();
-            $table->enum('status', ['Available', 'Unavailable'])->default('Available');
+            $table->string('status');
+            $table->longText('image')->nullable();
             $table->timestamps();
         });
     }

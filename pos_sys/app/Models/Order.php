@@ -13,31 +13,26 @@ class Order extends Model
         'order_number',
         'user_id',
         'customer_id',
+        'order_type',
         'total_amount',
         'status',
     ];
 
-    // Relationship ទៅកាន់ Customer
+    // Order belongs to Customer
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
 
-    // Relationship ទៅកាន់ OrderItems
-    public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
-
-    // Relationship ទៅកាន់ Payment
-    public function payment()
-    {
-        return $this->hasOne(Payment::class);
-    }
-
-    // Relationship ទៅកាន់ User (Cashier/Seller)
+    // Order belongs to User
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Order has many Order Items
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }

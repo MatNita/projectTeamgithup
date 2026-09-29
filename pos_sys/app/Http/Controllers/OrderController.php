@@ -3,102 +3,189 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Payment;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
+    // Get all orders
     public function index()
     {
-        $orders = Order::with(['customer', 'items.product', 'payment'])
-            ->orderBy('id', 'desc')
-            ->get();
+        $orders = Order::with([
+            'customer',
+            'user',
+            'items.product'
+        ])
+        ->latest()
+        ->get();
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'data' => $orders
-        ], 200);
+        ]);
     }
+
+
+    // Create Order + Order Items
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'order_number' => 'required|string|unique:orders,order_number',
             'user_id' => 'required|exists:users,id',
             'customer_id' => 'nullable|exists:customers,id',
+            'order_type' => 'required|in:Dine In,Takeaway,Delivery',
             'total_amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:cash,qr_code,card',
-            'amount_paid' => 'required|numeric|min:0',
+            'status' => 'required|in:pending,preparing,completed,cancelled',
+
             'items' => 'required|array|min:1',
+
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
+            'items.*.subtotal' => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
+
         try {
+
+            // Create Order
             $order = Order::create([
-                'order_number' => 'ORD-' . strtoupper(Str::random(6)),
-                'user_id' => $request->user_id,
-                'customer_id' => $request->customer_id,
-                'total_amount' => $request->total_amount,
-                'status' => 'completed',
+                'order_number' => $validated['order_number'],
+                'user_id' => $validated['user_id'],
+                'customer_id' => $validated['customer_id'] ?? null,
+                'order_type' => $validated['order_type'],
+                'total_amount' => $validated['total_amount'],
+                'status' => $validated['status'],
             ]);
 
-            foreach ($request->items as $item) {
-                $product = Product::findOrFail($item['product_id']);
 
-                if ($product->stock_quantity < $item['quantity']) {
-                    DB::rollBack();
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => "ទំនិញ {$product->name} មិនមានស្តុកគ្រប់គ្រាន់ទេ!"
-                    ], 400);
-                }
+            // Create Order Items
+            foreach ($validated['items'] as $item) {
 
-                OrderItem::create([
-                    'order_id' => $order->id,
+                $order->items()->create([
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['unit_price'],
-                    'subtotal' => $item['quantity'] * $item['unit_price'],
+                    'subtotal' => $item['subtotal'],
                 ]);
-
-                $product->decrement('stock_quantity', $item['quantity']);
             }
 
-            $changeGiven = max(0, $request->amount_paid - $request->total_amount);
-
-            Payment::create([
-                'order_id' => $order->id,
-                'payment_method' => $request->payment_method,
-                'amount_paid' => $request->amount_paid,
-                'change_given' => $changeGiven,
-            ]);
 
             DB::commit();
 
+
+            // Load relationships
+            $order->load([
+                'customer',
+                'user',
+                'items.product'
+            ]);
+
+
             return response()->json([
-                'status' => 'success',
-                'message' => ' Order created successfully!',
-                'data' => $order->load(['items.product', 'payment'])
+                'success' => true,
+                'message' => 'Order created successfully',
+                'data' => $order
             ], 201);
 
+
         } catch (\Exception $e) {
+
             DB::rollBack();
+
             return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create order: ' . $e->getMessage()
+                'success' => false,
+                'message' => 'Failed to create order',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
-    public function show(Order $order)
+
+
+    // Get one order
+    public function show($id)
     {
+        $order = Order::with([
+            'customer',
+            'user',
+            'items.product'
+        ])->find($id);
+
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+
         return response()->json([
-            'status' => 'success',
-            'data' => $order->load(['customer', 'items.product', 'payment'])
-        ], 200);
+            'success' => true,
+            'data' => $order
+        ]);
+    }
+
+
+    // Update Order
+    public function update(Request $request, $id)
+    {
+        $order = Order::find($id);
+
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+
+        $validated = $request->validate([
+            'customer_id' => 'nullable|exists:customers,id',
+            'order_type' => 'required|in:Dine In,Takeaway,Delivery',
+            'total_amount' => 'required|numeric|min:0',
+            'status' => 'required|in:pending,preparing,completed,cancelled',
+        ]);
+
+
+        $order->update($validated);
+
+
+        $order->load([
+            'customer',
+            'user',
+            'items.product'
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Order updated successfully',
+            'data' => $order
+        ]);
+    }
+
+
+    // Delete Order
+    public function destroy($id)
+    {
+        $order = Order::find($id);
+
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+
+        $order->delete();
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order deleted successfully'
+        ]);
     }
 }

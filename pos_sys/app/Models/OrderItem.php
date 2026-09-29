@@ -17,6 +17,13 @@ class OrderItem extends Model
         'subtotal',
     ];
 
+    // OrderItem belongs to Order
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    // OrderItem belongs to Product
     public function product()
     {
         return $this->belongsTo(Product::class);
