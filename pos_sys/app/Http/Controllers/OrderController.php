@@ -27,15 +27,16 @@ class OrderController extends Controller
 
 
     // Create Order + Order Items
+    // Create Order + Order Items
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'order_number' => 'required|string|unique:orders,order_number',
-            'user_id' => 'required|exists:users,id',
+            'order_number' => 'nullable|string|unique:orders,order_number',
+            'user_id' => 'nullable', // កុំប្រើ exists:users,id ដើម្បីការពារ error ពេលไม่มี user logged in
             'customer_id' => 'nullable|exists:customers,id',
-            'order_type' => 'required|in:Dine In,Takeaway,Delivery',
+            'order_type' => 'nullable|in:Dine In,Takeaway,Delivery',
             'total_amount' => 'required|numeric|min:0',
-            'status' => 'required|in:pending,preparing,completed,cancelled',
+            'status' => 'nullable|in:pending,preparing,completed,cancelled',
 
             'items' => 'required|array|min:1',
 
@@ -51,12 +52,12 @@ class OrderController extends Controller
 
             // Create Order
             $order = Order::create([
-                'order_number' => $validated['order_number'],
-                'user_id' => $validated['user_id'],
+                'order_number' => $validated['order_number'] ?? 'ORD-' . time(),
+                'user_id' => \App\Models\User::first()->id ?? 1, // ទាញយក ID របស់ User ដំបូងដែលមានស្រាប់ក្នុង DB
                 'customer_id' => $validated['customer_id'] ?? null,
-                'order_type' => $validated['order_type'],
+                'order_type' => $validated['order_type'] ?? 'Dine In',
                 'total_amount' => $validated['total_amount'],
-                'status' => $validated['status'],
+                'status' => $validated['status'] ?? 'pending',
             ]);
 
 

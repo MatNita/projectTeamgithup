@@ -344,367 +344,1244 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        let products = [];
-        let cart = [];
-        let selectedCategory = "All";
-        let currentUser = null;
-        let selectedCustomerForOrder = { id: "WALK_IN", name: "Walk-in Customer" };
+    // =========================================================
+    // SHOP DATA
+    // =========================================================
 
-        document.addEventListener("DOMContentLoaded", function () {
-            checkLogin();
-            setupHeaderView();
-            loadProducts();
-            loadCart();
-            createCategories();
-            displayProducts();
-            updateCartCount();
-        });
+    const PRODUCT_API_URL = "http://127.0.0.1:8000/api/products";
+    const CUSTOMER_API_URL = "http://127.0.0.1:8000/api/customers";
+    const ORDER_API_URL = "http://127.0.0.1:8000/api/orders";
 
-        function checkLogin() {
-            let savedUser = localStorage.getItem("currentUser");
-            if (!savedUser) {
-                alert("Please login first!");
-                window.location.href = "login.html";
-            }
+    let products = [];
+    let customers = [];
+    let cart = [];
+
+    let selectedCategory = "All";
+    let currentUser = null;
+
+    let selectedCustomerForOrder = {
+        id: "WALK_IN",
+        name: "Walk-in Customer"
+    };
+
+
+    // =========================================================
+    // PAGE LOAD
+    // =========================================================
+
+    document.addEventListener("DOMContentLoaded", async function () {
+
+        checkLogin();
+
+        setupHeaderView();
+
+        loadCart();
+
+        await loadCustomers();
+
+        await loadProducts();
+
+        createCategories();
+
+        displayProducts();
+
+        updateCartCount();
+
+        updateCartCustomerDisplay();
+    });
+
+
+    // =========================================================
+    // CHECK LOGIN
+    // =========================================================
+
+    function checkLogin() {
+
+        let savedUser = localStorage.getItem("currentUser");
+
+        if (!savedUser) {
+
+            alert("Please login first!");
+
+            window.location.href = "login.html";
+
+            return;
         }
 
-        /* Route user back home according to their role */
-        function goHome() {
-            let savedUser = localStorage.getItem("currentUser");
-            if (!savedUser) {
-                window.location.href = "login.html";
-                return;
-            }
-
-            let user = JSON.parse(savedUser);
-            let role = (user.selectedRole || user.role || "").toLowerCase().trim();
-
-            if (role === "user" || role === "customer") {
-                window.location.href = "user.html";
-            } else {
-                window.location.href = "index.html";
-            }
-        }
-
-        /* Adjust UI based on user role */
-        function setupHeaderView() {
-            let savedUser = localStorage.getItem("currentUser");
-            if (!savedUser) return;
+        try {
 
             currentUser = JSON.parse(savedUser);
-            let rawRole = currentUser.selectedRole || currentUser.role || "";
-            let role = rawRole.toLowerCase().trim();
 
-            const customerHeaderBox = document.getElementById("customerHeaderBox");
-            const staffHeaderBox = document.getElementById("staffHeaderBox");
-            const mainNavigation = document.getElementById("mainNavigation");
+        } catch (error) {
 
-            if (role === "admin" || role === "cashier") {
-                if (mainNavigation) mainNavigation.style.display = "flex";
-                if (customerHeaderBox) customerHeaderBox.style.display = "none";
-                if (staffHeaderBox) staffHeaderBox.style.display = "flex";
-                populateCustomerDropdown();
-            } else {
-                if (mainNavigation) mainNavigation.style.display = "none";
-                if (customerHeaderBox) customerHeaderBox.style.display = "block";
-                if (staffHeaderBox) staffHeaderBox.style.display = "none";
+            console.error("Invalid currentUser:", error);
 
-                let nameEl = document.getElementById("customerName");
-                let idEl = document.getElementById("customerId");
+            localStorage.removeItem("currentUser");
 
-                if (nameEl) nameEl.textContent = currentUser.name || "Customer";
-                if (idEl) idEl.textContent = currentUser.id ? `(${currentUser.id})` : "";
+            window.location.href = "login.html";
+        }
+    }
 
-                selectedCustomerForOrder = {
-                    id: currentUser.id || "CUST-00",
-                    name: currentUser.name || "Customer"
-                };
-            }
-            updateCartCustomerDisplay();
+
+    // =========================================================
+    // GO HOME
+    // =========================================================
+
+    function goHome() {
+
+        let savedUser = localStorage.getItem("currentUser");
+
+        if (!savedUser) {
+
+            window.location.href = "login.html";
+
+            return;
         }
 
-        function populateCustomerDropdown() {
-            const selectEl = document.getElementById("headerCustomerSelect");
-            if (!selectEl) return;
+        let user;
 
-            let customers = JSON.parse(localStorage.getItem("customers")) || [];
-            selectEl.innerHTML = '<option value="WALK_IN">-- Walk-in Customer --</option>';
+        try {
 
-            customers.forEach(cust => {
-                let opt = document.createElement("option");
-                opt.value = cust.id;
-                opt.textContent = `${cust.name} (${cust.id})`;
-                selectEl.appendChild(opt);
-            });
+            user = JSON.parse(savedUser);
+
+        } catch (error) {
+
+            window.location.href = "login.html";
+
+            return;
         }
 
-        function onHeaderCustomerChange(selectEl) {
-            let customers = JSON.parse(localStorage.getItem("customers")) || [];
-            let found = customers.find(c => String(c.id) === String(selectEl.value));
+        let role = (
+            user.selectedRole ||
+            user.role ||
+            ""
+        ).toLowerCase().trim();
 
-            if (found) {
-                selectedCustomerForOrder = { id: found.id, name: found.name };
-            } else {
-                selectedCustomerForOrder = { id: "WALK_IN", name: "Walk-in Customer" };
-            }
-            updateCartCustomerDisplay();
+
+        if (
+            role === "user" ||
+            role === "customer"
+        ) {
+
+            window.location.href = "user.html";
+
+        } else {
+
+            window.location.href = "index.html";
+        }
+    }
+
+
+    // =========================================================
+    // SETUP HEADER BASED ON ROLE
+    // =========================================================
+
+    function setupHeaderView() {
+
+        let savedUser = localStorage.getItem("currentUser");
+
+        if (!savedUser) return;
+
+        try {
+
+            currentUser = JSON.parse(savedUser);
+
+        } catch (error) {
+
+            console.error(error);
+
+            return;
         }
 
-        function updateCartCustomerDisplay() {
-            let cartNameEl = document.getElementById("cartCustomerName");
-            let cartIdEl = document.getElementById("cartCustomerId");
 
-            if (cartNameEl) cartNameEl.textContent = selectedCustomerForOrder.name;
-            if (cartIdEl) {
-                cartIdEl.textContent = selectedCustomerForOrder.id !== "WALK_IN" ? `(${selectedCustomerForOrder.id})` : "";
-            }
-        }
+        let rawRole =
+            currentUser.selectedRole ||
+            currentUser.role ||
+            "";
 
-        /* Shop logic */
-        function addToCart(productId) {
-            let product = products.find(p => String(p.productId || p.id) === String(productId));
-            if (!product) return;
+        let role = rawRole.toLowerCase().trim();
 
-            let stock = Number(product.stock) || 0;
-            if (stock <= 0) {
-                alert("Out of stock!");
-                return;
-            }
 
-            let cartItem = cart.find(item => String(item.productId) === String(productId));
-            if (cartItem) {
-                if (cartItem.quantity >= stock) {
-                    alert("Not enough stock!");
-                    return;
-                }
-                cartItem.quantity++;
-            } else {
-                cart.push({
-                    productId: product.productId || product.id,
-                    productName: product.productName,
-                    price: Number(product.price) || 0,
-                    quantity: 1
-                });
-            }
+        const customerHeaderBox =
+            document.getElementById("customerHeaderBox");
 
-            saveCart();
-            updateCartCount();
-            alert(product.productName + " added to cart!");
-        }
+        const staffHeaderBox =
+            document.getElementById("staffHeaderBox");
 
-        function loadProducts() {
-            products = JSON.parse(localStorage.getItem("products")) || [];
-        }
+        const mainNavigation =
+            document.getElementById("mainNavigation");
 
-        function loadCart() {
-            cart = JSON.parse(localStorage.getItem("cart")) || [];
-        }
 
-        function saveCart() {
-            localStorage.setItem("cart", JSON.stringify(cart));
-        }
+        // =====================================================
+        // ADMIN / CASHIER
+        // =====================================================
 
-        function createCategories() {
-            let categoryContainer = document.getElementById("categoryButtons");
-            if (!categoryContainer) return;
+        if (
+            role === "admin" ||
+            role === "cashier"
+        ) {
 
-            let categories = [...new Set(products.map(p => p.category).filter(Boolean))];
-
-            categoryContainer.innerHTML = `<button class="category-btn active" onclick="selectCategory('All')">All</button>`;
-            categories.forEach(cat => {
-                categoryContainer.innerHTML += `<button class="category-btn" onclick="selectCategory('${cat}')">${cat}</button>`;
-            });
-        }
-
-        function selectCategory(cat) {
-            selectedCategory = cat;
-            document.querySelectorAll(".category-btn").forEach(btn => {
-                btn.classList.toggle("active", btn.textContent === cat);
-            });
-            displayProducts();
-        }
-
-        function filterProducts() {
-            displayProducts();
-        }
-
-        function displayProducts() {
-            let grid = document.getElementById("productGrid");
-            if (!grid) return;
-
-            let searchInput = document.getElementById("searchInput");
-            let search = searchInput ? searchInput.value.toLowerCase().trim() : "";
-
-            let filtered = products.filter(p => {
-                let catMatch = selectedCategory === "All" || p.category === selectedCategory;
-                let nameMatch = (p.productName || "").toLowerCase().includes(search);
-                return catMatch && nameMatch;
-            });
-
-            grid.innerHTML = "";
-            filtered.forEach(p => {
-                let price = Number(p.price) || 0;
-                let img = p.image || "https://via.placeholder.com/200";
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <img src="${img}" class="product-image" onerror="this.src='https://via.placeholder.com/200'">
-                        <div class="product-content">
-                            <div class="product-name">${p.productName}</div>
-                            <div class="product-price">$${price.toFixed(2)}</div>
-                            <button class="add-cart-btn" onclick="addToCart('${p.productId || p.id}')">Add to Cart</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function updateCartCount() {
-            let count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            let cartCountEl = document.getElementById("cartCount");
-            if (cartCountEl) cartCountEl.textContent = count;
-        }
-
-        function openCart() {
-            displayCart();
-            new bootstrap.Modal(document.getElementById("cartModal")).show();
-        }
-
-        function displayCart() {
-            let cartItems = document.getElementById("cartItems");
-            let totalEl = document.getElementById("cartTotal");
-            if (!cartItems || !totalEl) return;
-
-            cartItems.innerHTML = "";
-            let total = 0;
-
-            if (cart.length === 0) {
-                document.getElementById("emptyCart").style.display = "block";
-                totalEl.textContent = "$0.00";
-                return;
-            }
-            document.getElementById("emptyCart").style.display = "none";
-
-            cart.forEach((item) => {
-                let sub = item.price * item.quantity;
-                total += sub;
-                cartItems.innerHTML += `
-                    <div class="cart-item d-flex justify-content-between align-items-center py-2 border-bottom">
-                        <div style="flex: 2;">
-                            <div class="fw-bold">${item.productName}</div>
-                            <small class="text-muted">$${item.price.toFixed(2)}</small>
-                        </div>
-
-                        <div class="d-flex align-items-center gap-2" style="flex: 1.2;">
-                            <button class="btn btn-sm btn-outline-secondary px-2" onclick="changeQuantity('${item.productId}', -1)">-</button>
-                            <span class="fw-bold">${item.quantity}</span>
-                            <button class="btn btn-sm btn-outline-secondary px-2" onclick="changeQuantity('${item.productId}', 1)">+</button>
-                        </div>
-
-                        <div style="flex: 1;" class="text-end fw-bold">$${sub.toFixed(2)}</div>
-
-                        <div style="flex: 0.8;" class="text-end">
-                            <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart('${item.productId}')">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>`;
-            });
-            totalEl.textContent = "$" + total.toFixed(2);
-        }
-
-        function changeQuantity(productId, amount) {
-            let cartItem = cart.find(i => String(i.productId) === String(productId));
-            if (!cartItem) return;
-
-            let product = products.find(p => String(p.productId || p.id) === String(productId));
-            let stock = product ? (Number(product.stock) || 0) : 999;
-
-            if (amount > 0 && cartItem.quantity >= stock) {
-                alert("Not enough stock!");
-                return;
+            if (mainNavigation) {
+                mainNavigation.style.display = "flex";
             }
 
-            cartItem.quantity += amount;
-
-            if (cartItem.quantity <= 0) {
-                removeFromCart(productId);
-            } else {
-                saveCart();
-                displayCart();
-                updateCartCount();
+            if (customerHeaderBox) {
+                customerHeaderBox.style.display = "none";
             }
+
+            if (staffHeaderBox) {
+                staffHeaderBox.style.display = "flex";
+            }
+
         }
 
-        function removeFromCart(productId) {
-            cart = cart.filter(i => String(i.productId) !== String(productId));
-            saveCart();
-            displayCart();
-            updateCartCount();
+        // =====================================================
+        // CUSTOMER / USER
+        // =====================================================
+
+        else {
+
+            if (mainNavigation) {
+                mainNavigation.style.display = "none";
+            }
+
+            if (customerHeaderBox) {
+                customerHeaderBox.style.display = "block";
+            }
+
+            if (staffHeaderBox) {
+                staffHeaderBox.style.display = "none";
+            }
+
+
+            let nameEl =
+                document.getElementById("customerName");
+
+            let idEl =
+                document.getElementById("customerId");
+
+
+            if (nameEl) {
+
+                nameEl.textContent =
+                    currentUser.name || "Customer";
+            }
+
+
+            if (idEl) {
+
+                idEl.textContent =
+                    currentUser.id
+                        ? `(${currentUser.id})`
+                        : "";
+            }
+
+
+            selectedCustomerForOrder = {
+
+                id: currentUser.id || "WALK_IN",
+
+                name:
+                    currentUser.name ||
+                    "Customer"
+            };
         }
 
-        function checkout() {
-            if (cart.length === 0) return alert("Cart is empty!");
 
-            let currentProducts = JSON.parse(localStorage.getItem("products")) || [];
+        updateCartCustomerDisplay();
+    }
 
-            for (let item of cart) {
-                let prod = currentProducts.find(p => String(p.productId || p.id) === String(item.productId));
-                if (prod) {
-                    let currentStock = Number(prod.stock) || 0;
-                    if (currentStock < item.quantity) {
-                        alert(`Item "${item.productName}" is out of stock! (Remaining: ${currentStock})`);
-                        return;
+
+    // =========================================================
+    // LOAD CUSTOMERS FROM LARAVEL
+    // =========================================================
+
+    async function loadCustomers() {
+
+        try {
+
+            const response = await fetch(
+                CUSTOMER_API_URL,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
                     }
-                    prod.stock = currentStock - item.quantity;
                 }
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Customer API error: " +
+                    response.status
+                );
             }
 
-            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-            let order = {
-                id: "ORD-" + Date.now(),
-                customerId: selectedCustomerForOrder.id,
-                customerName: selectedCustomerForOrder.name,
-                items: cart.map(item => ({
-                    productId: item.productId,
-                    productName: item.productName,
-                    price: item.price,
-                    quantity: item.quantity,
-                    subtotal: item.price * item.quantity
-                })),
-                totalPrice: total,
-                status: "Pending",
-                dateOrder: new Date().toISOString().split("T")[0],
-                timeOrder: new Date().toLocaleTimeString()
+            const result =
+                await response.json();
+
+
+            console.log(
+                "Customer API Response:",
+                result
+            );
+
+
+            if (Array.isArray(result)) {
+
+                customers = result;
+
+            } else if (
+                result.data &&
+                Array.isArray(result.data)
+            ) {
+
+                customers = result.data;
+
+            } else {
+
+                customers = [];
+            }
+
+
+            console.log(
+                "Customers loaded:",
+                customers
+            );
+
+
+            populateCustomerDropdown();
+
+
+        } catch (error) {
+
+            console.error(
+                "Load Customers Error:",
+                error
+            );
+
+            customers = [];
+
+            populateCustomerDropdown();
+        }
+    }
+
+
+    // =========================================================
+    // POPULATE CUSTOMER DROPDOWN
+    // =========================================================
+
+    function populateCustomerDropdown() {
+
+        const selectEl =
+            document.getElementById(
+                "headerCustomerSelect"
+            );
+
+        if (!selectEl) return;
+
+
+        selectEl.innerHTML =
+            '<option value="WALK_IN">-- Walk-in Customer --</option>';
+
+
+        customers.forEach(function (cust) {
+
+            let opt =
+                document.createElement("option");
+
+
+            opt.value = cust.id;
+
+
+            opt.textContent =
+                `${cust.name} (${cust.id})`;
+
+
+            selectEl.appendChild(opt);
+        });
+
+
+        let role =
+            (
+                currentUser &&
+                (
+                    currentUser.selectedRole ||
+                    currentUser.role ||
+                    ""
+                )
+            ).toLowerCase().trim();
+
+
+        if (
+            role === "admin" ||
+            role === "cashier"
+        ) {
+
+            selectEl.value = "WALK_IN";
+
+            selectedCustomerForOrder = {
+
+                id: "WALK_IN",
+
+                name: "Walk-in Customer"
+            };
+        }
+    }
+
+
+    // =========================================================
+    // STAFF SELECT CUSTOMER
+    // =========================================================
+
+    function onHeaderCustomerChange(selectEl) {
+
+        let selectedId =
+            selectEl.value;
+
+
+        if (
+            !selectedId ||
+            selectedId === "WALK_IN"
+        ) {
+
+            selectedCustomerForOrder = {
+
+                id: "WALK_IN",
+
+                name: "Walk-in Customer"
             };
 
-            let orders = JSON.parse(localStorage.getItem("orders")) || [];
-            orders.push(order);
-            localStorage.setItem("orders", JSON.stringify(orders));
-            localStorage.setItem("products", JSON.stringify(currentProducts));
+        } else {
 
-            alert("Order placed successfully!\nCustomer: " + selectedCustomerForOrder.name);
+            let found =
+                customers.find(function (cust) {
 
-            cart = [];
-            saveCart();
-            updateCartCount();
-            loadProducts();
-            displayProducts();
+                    return String(cust.id) ===
+                        String(selectedId);
+                });
 
-            let role = ((currentUser && (currentUser.selectedRole || currentUser.role)) || "").toLowerCase().trim();
-            if (role === "admin" || role === "cashier") {
-                let selectEl = document.getElementById("headerCustomerSelect");
-                if (selectEl) {
-                    selectEl.value = "WALK_IN";
-                    onHeaderCustomerChange(selectEl);
-                }
+
+            if (found) {
+
+                selectedCustomerForOrder = {
+
+                    id: found.id,
+
+                    name:
+                        found.name ||
+                        "Customer"
+                };
+
+            } else {
+
+                selectedCustomerForOrder = {
+
+                    id: "WALK_IN",
+
+                    name: "Walk-in Customer"
+                };
+            }
+        }
+
+
+        updateCartCustomerDisplay();
+    }
+
+
+    // =========================================================
+    // UPDATE CUSTOMER IN CART MODAL
+    // =========================================================
+
+    function updateCartCustomerDisplay() {
+
+        let cartNameEl =
+            document.getElementById(
+                "cartCustomerName"
+            );
+
+        let cartIdEl =
+            document.getElementById(
+                "cartCustomerId"
+            );
+
+
+        if (cartNameEl) {
+
+            cartNameEl.textContent =
+                selectedCustomerForOrder.name;
+        }
+
+
+        if (cartIdEl) {
+
+            if (
+                selectedCustomerForOrder.id !==
+                "WALK_IN"
+            ) {
+
+                cartIdEl.textContent =
+                    `(${selectedCustomerForOrder.id})`;
+
+            } else {
+
+                cartIdEl.textContent = "";
+            }
+        }
+    }
+
+
+    // =========================================================
+    // LOAD PRODUCTS FROM LARAVEL
+    // =========================================================
+
+    async function loadProducts() {
+
+        try {
+
+            const response =
+                await fetch(
+                    PRODUCT_API_URL,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Product API error: " +
+                    response.status
+                );
             }
 
-            let modalEl = document.getElementById("cartModal");
-            let modalInstance = bootstrap.Modal.getInstance(modalEl);
-            if (modalInstance) modalInstance.hide();
+
+            const result =
+                await response.json();
+
+
+            console.log(
+                "Product API Response:",
+                result
+            );
+
+
+            if (Array.isArray(result)) {
+
+                products = result;
+
+            } else if (
+                result.data &&
+                Array.isArray(result.data)
+            ) {
+
+                products = result.data;
+
+            } else {
+
+                products = [];
+            }
+
+
+            console.log(
+                "Products loaded:",
+                products
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Load Products Error:",
+                error
+            );
+
+
+            products = [];
+
+
+            let grid =
+                document.getElementById(
+                    "productGrid"
+                );
+
+
+            if (grid) {
+
+                grid.innerHTML = `
+                    <div class="alert alert-danger">
+                        Cannot load products from server.
+                        <br>
+                        Please check Laravel server.
+                    </div>
+                `;
+            }
         }
+    }
+
+
+    // =========================================================
+    // LOAD CART
+    // =========================================================
+
+    function loadCart() {
+
+        try {
+
+            cart =
+                JSON.parse(
+                    localStorage.getItem("cart")
+                ) || [];
+
+        } catch (error) {
+
+            console.error(
+                "Load Cart Error:",
+                error
+            );
+
+            cart = [];
+        }
+    }
+
+
+    // =========================================================
+    // SAVE CART
+    // =========================================================
+
+    function saveCart() {
+
+        localStorage.setItem(
+            "cart",
+            JSON.stringify(cart)
+        );
+    }
+
+
+    // =========================================================
+    // CREATE CATEGORY BUTTONS
+    // =========================================================
+
+    function createCategories() {
+
+        let categoryContainer =
+            document.getElementById(
+                "categoryButtons"
+            );
+
+
+        if (!categoryContainer) return;
+
+
+        let categories = [
+            ...new Set(
+                products
+                    .map(function (p) {
+                        return p.category;
+                    })
+                    .filter(Boolean)
+            )
+        ];
+
+
+        categoryContainer.innerHTML =
+            `
+            <button
+                class="category-btn active"
+                onclick="selectCategory('All')">
+                All
+            </button>
+            `;
+
+
+        categories.forEach(function (cat) {
+
+            categoryContainer.innerHTML += `
+                <button
+                    class="category-btn"
+                    onclick="selectCategory('${escapeHtml(cat)}')">
+                    ${escapeHtml(cat)}
+                </button>
+            `;
+        });
+    }
+
+
+    // =========================================================
+    // SELECT CATEGORY
+    // =========================================================
+
+    function selectCategory(cat) {
+
+        selectedCategory = cat;
+
+
+        document
+            .querySelectorAll(".category-btn")
+            .forEach(function (btn) {
+
+                btn.classList.toggle(
+                    "active",
+                    btn.textContent.trim() === cat
+                );
+            });
+
+
+        displayProducts();
+    }
+
+
+    // =========================================================
+    // FILTER PRODUCTS
+    // =========================================================
+
+    function filterProducts() {
+
+        displayProducts();
+    }
+
+
+    // =========================================================
+    // IMAGE URL
+    // =========================================================
+
+    function getImageUrl(image) {
+
+        if (!image) {
+
+            return "https://via.placeholder.com/200";
+        }
+
+
+        if (
+            image.startsWith("http://") ||
+            image.startsWith("https://")
+        ) {
+
+            return image;
+        }
+
+
+        if (image.startsWith("/")) {
+
+            return "http://127.0.0.1:8000" + image;
+        }
+
+
+        return "http://127.0.0.1:8000/" + image;
+    }
+
+
+    // =========================================================
+    // DISPLAY PRODUCTS
+    // =========================================================
+
+    function displayProducts() {
+
+        let grid =
+            document.getElementById(
+                "productGrid"
+            );
+
+
+        if (!grid) return;
+
+
+        let searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        let search =
+            searchInput
+                ? searchInput.value
+                    .toLowerCase()
+                    .trim()
+                : "";
+
+
+        let filtered =
+            products.filter(function (p) {
+
+                let productName =
+                    p.name || "";
+
+
+                let catMatch =
+                    selectedCategory === "All" ||
+                    p.category === selectedCategory;
+
+
+                let nameMatch =
+                    productName
+                        .toLowerCase()
+                        .includes(search);
+
+
+                let statusMatch =
+                    !p.status ||
+                    String(p.status).toLowerCase() === "active" ||
+                    String(p.status).toLowerCase() === "Inactive";
+
+
+                return (
+                    catMatch &&
+                    nameMatch &&
+                    statusMatch
+                );
+            });
+
+
+        grid.innerHTML = "";
+
+
+        if (filtered.length === 0) {
+
+            grid.innerHTML = `
+                <div class="alert alert-info">
+                    No products found.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        filtered.forEach(function (p) {
+
+            let price =
+                Number(p.price) || 0;
+
+
+            let stock =
+                Number(p.stock) || 0;
+
+
+            let productName =
+                p.name || "Unnamed Product";
+
+
+            let image =
+                getImageUrl(p.image);
+
+
+            let buttonText =
+                stock > 0
+                    ? "Add to Cart"
+                    : "Out of Stock";
+
+
+            let disabled =
+                stock <= 0
+                    ? "disabled"
+                    : "";
+
+
+            grid.innerHTML += `
+                <div class="product-card">
+
+                    <img
+                        src="${image}"
+                        class="product-image"
+                        onerror="this.src='https://via.placeholder.com/200'"
+                    >
+
+                    <div class="product-content">
+
+                        <div class="product-name">
+                            ${escapeHtml(productName)}
+                        </div>
+
+                        <div class="product-price">
+                            $${price.toFixed(2)}
+                        </div>
+
+                        <small class="text-muted">
+                            Stock: ${stock}
+                        </small>
+
+                        <button
+                            class="add-cart-btn mt-2"
+                            onclick="addToCart(${p.id})"
+                            ${disabled}>
+                            ${buttonText}
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+        });
+    }
+
+
+    // =========================================================
+    // ADD PRODUCT TO CART
+    // =========================================================
+
+    function addToCart(productId) {
+
+        let product =
+            products.find(function (p) {
+
+                return String(p.id) ===
+                    String(productId);
+            });
+
+
+        if (!product) {
+
+            alert("Product not found!");
+
+            return;
+        }
+
+
+        let stock =
+            Number(product.stock) || 0;
+
+
+        if (stock <= 0) {
+
+            alert("Out of stock!");
+
+            return;
+        }
+
+
+        let cartItem =
+            cart.find(function (item) {
+
+                return String(item.productId) ===
+                    String(product.id);
+            });
+
+
+        if (cartItem) {
+
+            if (
+                cartItem.quantity >= stock
+            ) {
+
+                alert("Not enough stock!");
+
+                return;
+            }
+
+
+            cartItem.quantity++;
+
+        } else {
+
+            cart.push({
+
+                productId: product.id,
+
+                productName:
+                    product.name ||
+                    "Unnamed Product",
+
+                price:
+                    Number(product.price) || 0,
+
+                quantity: 1
+            });
+        }
+
+
+        saveCart();
+
+        updateCartCount();
+
+        displayCart();
+
+
+        alert(
+            (product.name || "Product") +
+            " added to cart!"
+        );
+    }
+
+
+    // =========================================================
+    // UPDATE CART COUNT
+    // =========================================================
+
+    function updateCartCount() {
+
+        let count =
+            cart.reduce(
+                function (sum, item) {
+
+                    return sum +
+                        Number(item.quantity || 0);
+
+                },
+                0
+            );
+
+
+        let cartCountEl =
+            document.getElementById(
+                "cartCount"
+            );
+
+
+        if (cartCountEl) {
+
+            cartCountEl.textContent = count;
+        }
+    }
+
+
+    // =========================================================
+    // OPEN CART
+    // =========================================================
+
+    function openCart() {
+
+        displayCart();
+
+
+        let modalElement =
+            document.getElementById(
+                "cartModal"
+            );
+
+
+        if (!modalElement) return;
+
+
+        let modal =
+            bootstrap.Modal.getOrCreateInstance(
+                modalElement
+            );
+
+
+        modal.show();
+    }
+
+
+    // =========================================================
+    // DISPLAY CART
+    // =========================================================
+
+    function displayCart() {
+
+        let cartItems =
+            document.getElementById("cartItems");
+
+        let emptyCart =
+            document.getElementById("emptyCart");
+
+        let cartTotal =
+            document.getElementById("cartTotal");
+
+
+        if (!cartItems || !cartTotal) return;
+
+
+        cartItems.innerHTML = "";
+
+
+        if (cart.length === 0) {
+
+            if (emptyCart) emptyCart.style.display = "block";
+
+            cartTotal.textContent = "$0.00";
+
+            return;
+        }
+
+
+        if (emptyCart) emptyCart.style.display = "none";
+
+
+        let total = 0;
+
+
+        cart.forEach(function (item, index) {
+
+            let itemTotal = item.price * item.quantity;
+
+            total += itemTotal;
+
+
+            cartItems.innerHTML += `
+                <div class="cart-item">
+                    <div>
+                        <strong>${escapeHtml(item.productName)}</strong>
+                        <div class="text-muted">$${item.price.toFixed(2)} x ${item.quantity}</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${index}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${index}, 1)">+</button>
+                        <button class="btn btn-sm btn-danger ms-2" onclick="removeFromCart(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+
+        cartTotal.textContent = `$${total.toFixed(2)}`;
+    }
+
+
+    // =========================================================
+    // CHANGE QUANTITY IN CART
+    // =========================================================
+
+    function changeQuantity(index, delta) {
+
+        if (cart[index]) {
+
+            let product = products.find(p => String(p.id) === String(cart[index].productId));
+
+            let maxStock = product ? Number(product.stock) : 999;
+
+
+            cart[index].quantity += delta;
+
+
+            if (cart[index].quantity > maxStock) {
+
+                alert("Cannot exceed available stock (" + maxStock + ")!");
+
+                cart[index].quantity = maxStock;
+            }
+
+
+            if (cart[index].quantity <= 0) {
+
+                cart.splice(index, 1);
+            }
+
+
+            saveCart();
+
+            updateCartCount();
+
+            displayCart();
+        }
+    }
+
+
+    // =========================================================
+    // REMOVE FROM CART
+    // =========================================================
+
+    function removeFromCart(index) {
+
+        if (cart[index]) {
+
+            cart.splice(index, 1);
+
+            saveCart();
+
+            updateCartCount();
+
+            displayCart();
+        }
+    }
+
+
+    // =========================================================
+    // CHECKOUT ORDER TO LARAVEL API
+    // =========================================================
+
+    async function checkout() {
+    if (!cart || cart.length === 0) {
+        alert('Cart is empty!');
+        return;
+    }
+
+    // Map items ឱ្យត្រូវ format ជាមួយ backend
+    const orderItems = cart.map(item => ({
+    product_id: parseInt(item.product_id || item.id || item.productId), // ទាញយក ID មិនឱ្យខុស key
+    quantity: parseInt(item.quantity),
+    unit_price: parseFloat(item.price),
+    subtotal: parseFloat(item.price) * parseInt(item.quantity)
+}));
+
+    const totalAmount = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+    // ទាញយក ID របស់ customer ឱ្យដាច់ខាច់ជា Integer ឬ null (មិនត្រូវផ្ញើទាំង Object ទេ)
+    let customerId = null;
+    if (typeof selectedCustomer !== 'undefined' && selectedCustomer) {
+        if (typeof selectedCustomer === 'object' && selectedCustomer.id) {
+            customerId = parseInt(selectedCustomer.id);
+        } else if (!isNaN(selectedCustomer)) {
+            customerId = parseInt(selectedCustomer);
+        }
+    }
+
+    const orderData = {
+        order_number: 'ORD-' + Date.now(),
+        user_id: 1, // បញ្ជាក់ជាលេខ 1 ស្រាប់
+        customer_id: customerId, // ធានាថាជាលេខ ID ឬ null ត្រឹមត្រូវ
+        order_type: 'Dine In',
+        status: 'pending',
+        total_amount: totalAmount,
+        items: orderItems
+    };
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            alert('Checkout ជោគជ័យ! Order No: ' + result.data.order_number);
+            cart = [];
+            if (typeof updateCartUI === 'function') updateCartUI();
+            
+            // បិទ Modal Cart បើមាន
+            const cartModal = document.getElementById('cartModal');
+            if (cartModal) cartModal.style.display = 'none';
+        } else {
+            console.error('Validation Fail Details:', result);
+            alert('Checkout បរាជ័យ! សូមពិនិត្យ Console');
+        }
+    } catch (error) {
+        console.error('Fetch Error:', error);
+    }
+}
+
+
+    // =========================================================
+    // ESCAPE HTML UTILITY
+    // =========================================================
+
+    function escapeHtml(text) {
+
+        if (!text) return "";
+
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
     </script>
 </body>
 

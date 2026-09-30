@@ -1,471 +1,460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="km">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Restaurant Management System - Inventory</title>
-
+    <title>Product Management</title>
     <style>
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Kanten', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
-            background: #eeeeee;
-        }
-
-        /* Main container */
-        .container {
-            width: 100%;
-            min-height: 100vh;
-            padding: 30px;
-        }
-
-        /* Product table box */
-        .table-box {
-            background: white;
-            padding: 20px;
-            border-radius: 4px;
-            margin-bottom: 25px;
-        }
-
-        .table-title {
-            font-size: 15px;
-            margin-bottom: 8px;
+            background-color: #f4f6f9;
+            margin: 20px;
             color: #333;
         }
-
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
+        .form-container, .table-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .form-container {
+            flex: 1;
+        }
+        .table-container {
+            flex: 2;
+        }
+        h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .image-preview {
+            width: 100%;
+            height: 150px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-save { background-color: #27ae60; }
+        .btn-save:hover { background-color: #219150; }
+        .btn-update { background-color: #2980b9; }
+        .btn-update:hover { background-color: #1f6391; }
+        .btn-delete { background-color: #c0392b; }
+        .btn-delete:hover { background-color: #962d22; }
+        .btn-clear { background-color: #7f8c8d; }
+        .btn-clear:hover { background-color: #616e6f; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
         }
-
-        th {
-            background: #4b3029;
-            color: white;
-            padding: 7px;
+        th, td {
             border: 1px solid #ddd;
+            padding: 10px;
             text-align: left;
         }
-
-        td {
-            padding: 7px;
-            border: 1px solid #ddd;
-            background: #f5f5f5;
-        }
-
-        tbody tr {
-            cursor: pointer;
-        }
-
-        tbody tr:hover td {
-            background: #e9dfdc;
-        }
-
-        tbody tr.selected td {
-            background: #1479c9;
+        th {
+            background-color: #34495e;
             color: white;
         }
-
-        /* Form */
-        .form-box {
-            background: white;
-            padding: 30px 40px;
-            min-height: 300px;
+        tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
         }
-
-        .form-content {
-            display: flex;
-            justify-content: space-between;
-            gap: 40px;
+        tr.selected {
+            background-color: #d1ecf1;
         }
-
-        .form-left {
-            flex: 1;
-        }
-
-        .form-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .form-row label {
-            width: 105px;
-            text-align: right;
-            margin-right: 12px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        input,
-        select {
-            width: 210px;
-            height: 28px;
-            border: 1px solid #bbb;
-            padding: 5px 8px;
-            outline: none;
-            background: white;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: #6b463c;
-        }
-
-        /* Image section */
-        .image-section {
-            width: 150px;
-            text-align: center;
-        }
-
-        #imagePreview {
-            width: 130px;
-            height: 140px;
+        .product-img-tbl {
+            width: 50px;
+            height: 50px;
             object-fit: cover;
-            border: 1px solid #ddd;
-            background: #f3f3f3;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .import-btn {
-            width: 130px;
-            height: 34px;
-            border: none;
-            background: #5a3b33;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .import-btn:hover {
-            background: #432b25;
-        }
-
-        #imageInput {
-            display: none;
-        }
-
-        /* Buttons */
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 25px;
-        }
-
-        .buttons button {
-            width: 130px;
-            height: 35px;
-            border: none;
-            background: #5a3b33;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .buttons button:hover {
-            background: #432b25;
-        }
-
-        /* Status */
-        .available {
-            color: green;
-            font-weight: bold;
-        }
-
-        .unavailable {
-            color: red;
-            font-weight: bold;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .form-content {
-                flex-direction: column;
-            }
-
-            .form-left {
-                width: 100%;
-            }
-
-            .image-section {
-                margin: auto;
-            }
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <div class="table-box">
-        <div class="table-title"> All Products</div>
-        <div class="table-container">
-            <table id="productTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>ProductId</th>
-                        <th>ProductName</th>
-                        <th>Category</th>
-                        <th>stock</th>
-                        <th>price</th>
-                        <th>status</th>
-                        <th>image</th>
-                        <th>DateInsert</th>
-                        <th>DateUpdate</th>
-                    </tr>
-                </thead>
-                <tbody id="productTableBody">
-                </tbody>
-            </table>
-        </div>
+    <!-- Form Section -->
+    <div class="form-container">
+        <h2>Information of Product</h2>
+        <form id="productForm" onsubmit="event.preventDefault();">
+            <input type="hidden" id="productId">
+
+            <div class="form-group">
+                <label for="productName">Product-Name</label>
+                <input type="text" id="productName" required>
+            </div>
+
+            <!-- កែប្រែ Category ទៅជា Dropdown Select -->
+            <div class="form-group">
+                <label for="category">category</label>
+                <select id="category" required>
+                    <option value="">Select category</option>
+                    <option value="Maincourse">Maincourse</option>
+                    <option value="Desert">Desert</option>
+                    <option value="Drink">Drink</option>
+                    <option value="Salats">Salats</option>
+                    <option value="Soup">Soup</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <input type="number" id="stock" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price $</label>
+                <input type="number" step="0.01" id="price" required>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" required>
+                    <option value="">Select Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="imageInput">Image</label>
+                <input type="file" id="imageInput" accept="image/*">
+                <div class="image-preview" id="previewContainer">
+                    <img id="imagePreview" src="" alt="រូបភាពបង្ហាញ" style="display:none;">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn-save" onclick="saveProduct()">Add</button>
+                <button type="button" class="btn-update" onclick="updateProduct()">Update</button>
+                <button type="button" class="btn-delete" onclick="deleteProduct()">Delete</button>
+                <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
+            </div>
+        </form>
     </div>
 
-    <div class="form-box">
-        <div class="form-content">
-            <div class="form-left">
-                <div class="form-row">
-                    <label>Product ID:</label>
-                    <input type="text" id="productId">
-                </div>
-                <div class="form-row">
-                    <label>Product Name:</label>
-                    <input type="text" id="productName">
-                </div>
-                <div class="form-row">
-                    <label>Category:</label>
-                    <select id="category">
-                        <option value="">Select Category</option>
-                        <option value="Main Course">Main Course</option>
-                        <option value="Soup">Soup</option>
-                        <option value="Salads">Salads</option>
-                        <option value="Dessert">Dessert</option>
-                        <option value="Drink">Drink</option>
-                        <option value="Cake">Cake</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-left">
-                <div class="form-row">
-                    <label>Stock:</label>
-                    <input type="number" id="stock">
-                </div>
-
-                <div class="form-row">
-                    <label>Price ($):</label>
-                    <input type="number" id="price" step="0.01">
-                </div>
-
-                <div class="form-row">
-                    <label>Status:</label>
-                    <select id="status">
-                        <option value="">Select Status</option>
-                        <option value="Available">Available</option>
-                        <option value="Unavailable">Unavailable</option>
-                    </select>
-                </div>
-            </div>
-            <!-- image -->
-            <div class="image-section">
-                <img id="imagePreview" src="" alt="Product Image">
-                <input type="file" id="imageInput" accept="image/*">
-                <button class="import-btn" onclick="document.getElementById('imageInput').click()">IMPORT</button>
-            </div>
-        </div>
-        <!-- Button -->
-        <div class="buttons">
-            <button onclick="addProduct()">ADD</button>
-            <button onclick="updateProduct()">UPDATE</button>
-            <button onclick="deleteProduct()">DELETE</button>
-            <button onclick="clearForm()">CLEAR</button>
-        </div>
+    <!-- Table Section -->
+    <div class="table-container">
+        <h2>Product List</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                <!-- Data will be loaded here dynamically -->
+            </tbody>
+        </table>
     </div>
 </div>
+
 <script>
-
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-
+    const API_URL = "http://127.0.0.1:8000/api/products";
+    let products = [];
     let selectedIndex = -1;
     let selectedImage = "";
+
+    // Load initial products from API
+    document.addEventListener("DOMContentLoaded", fetchProducts);
+
+    async function fetchProducts() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error("Network response was not ok");
+            products = await response.json();
+            displayProducts();
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    }
+
     function displayProducts() {
-        const tableBody =
-            document.getElementById("productTableBody");
-        tableBody.innerHTML = "";
+        const tbody = document.getElementById("productTableBody");
+        tbody.innerHTML = "";
+
         products.forEach((product, index) => {
-            const row = document.createElement("tr");
-            if (index === selectedIndex) {
-                row.classList.add("selected");
-            }
-            row.innerHTML = `
-                <td>${product.id}</td>
-                <td>${product.productId}</td>
-                <td>${product.productName}</td>
-                <td>${product.category}</td>
-                <td>${product.stock}</td>
-                <td>${product.price}</td>
-                <td class="${product.status === "Available"? "available": "unavailable"}">${product.status}
-                </td>
-                <td>
-                    ${product.image? "Image": ""}
-                </td>
-                <td>${product.dateInsert}</td>
-                <td>${product.dateUpdate}</td>
+            const tr = document.createElement("tr");
+            if (index === selectedIndex) tr.classList.add("selected");
+
+            tr.onclick = () => selectProduct(index);
+
+            tr.innerHTML = `
+                <td><img src="http://127.0.0.1:8000/${product.image}" class="product-img-tbl" alt="prod"></td>
+                <td>${product.name || ''}</td>
+                <td>${product.category || ''}</td>
+                <td>${product.stock ?? 0}</td>
+                <td>$${parseFloat(product.price || 0).toFixed(2)}</td>
+                <td>${product.status || ''}</td>
             `;
-            row.onclick = function () {
-                selectProduct(index);
-            };
-            tableBody.appendChild(row);
+            tbody.appendChild(tr);
         });
     }
-    // Select Product
-    function selectProduct(index) {
-        selectedIndex = index;
-        const product = products[index];
-        document.getElementById("productId").value =
-            product.productId;
-        document.getElementById("productName").value =
-            product.productName;
-        document.getElementById("category").value =
-            product.category;
-        document.getElementById("stock").value =
-            product.stock;
-        document.getElementById("price").value =
-            product.price;
-        document.getElementById("status").value =
-            product.status;
-        selectedImage = product.image || "";
-        document.getElementById("imagePreview").src =
-            selectedImage;
-       displayProducts();
-    }
-    // Import Image
-    document
-        .getElementById("imageInput")
-        .addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-            // Check image
-            if (!file.type.startsWith("image/")) {
-                alert("Please select an image file.");
-                return;
-            }
+
+    // Image file handler
+    document.getElementById("imageInput").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedImage = e.target.result;
-                document.getElementById("imagePreview").src =
-                    selectedImage;
+            reader.onload = function(event) {
+                selectedImage = event.target.result;
+                const img = document.getElementById("imagePreview");
+                img.src = selectedImage;
+                img.style.display = "block";
             };
             reader.readAsDataURL(file);
+        }
+    });
+
+    function selectProduct(index) {
+        selectedIndex = index;
+        const p = products[index];
+
+        document.getElementById("productId").value = p.id || "";
+        document.getElementById("productName").value = p.name || "";
+        document.getElementById("category").value = p.category || "";
+        document.getElementById("stock").value = p.stock ?? "";
+        document.getElementById("price").value = p.price ?? "";
+        document.getElementById("status").value = p.status || "";
+
+        const img = document.getElementById("imagePreview");
+        if (p.image) {
+            selectedImage = p.image;
+            img.src = p.image;
+            img.style.display = "block";
+        } else {
+            selectedImage = "";
+            img.src = "";
+            img.style.display = "none";
+        }
+
+        displayProducts();
+    }
+
+async function saveProduct() {
+
+    const name = document.getElementById("productName").value.trim();
+    const category = document.getElementById("category").value;
+    const stock = document.getElementById("stock").value;
+    const price = document.getElementById("price").value;
+    const status = document.getElementById("status").value;
+    const imageFile = document.getElementById("imageInput").files[0];
+
+    if (!name) {
+        alert("សូមបញ្ចូលឈ្មោះផលិតផល!");
+        return;
+    }
+
+    if (!category) {
+        alert("សូមជ្រើសរើសប្រភេទ Category!");
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("category", category);
+    formData.append("stock", stock || 0);
+    formData.append("price", price || 0);
+    formData.append("status", status);
+
+    if (imageFile) {
+        formData.append("image", imageFile);
+    }
+
+    console.log("================================");
+    console.log("API URL:", API_URL);
+    console.log("Method: POST");
+    console.log("Image:", imageFile);
+    console.log("================================");
+
+    try {
+
+        const response = await fetch(API_URL, {
+            method: "POST",
+
+            headers: {
+                "Accept": "application/json"
+            },
+
+            body: formData
         });
-    function addProduct() {
-        const productId =
-            document.getElementById("productId").value.trim();
-        const productName =
-            document.getElementById("productName").value.trim();
-        const category =
-            document.getElementById("category").value;
-        const stock =
-            document.getElementById("stock").value;
-        const price =
-            document.getElementById("price").value;
-        const status =
-            document.getElementById("status").value;
-        // Validation
-        if (
-            productId === "" ||
-            productName === "" ||
-            category === "" ||
-            stock === "" ||
-            price === "" ||
-            status === ""
-        ) {
-            alert("Please fill in all fields.");
-            return;
+
+        console.log("Response received!");
+        console.log("Status:", response.status);
+        console.log("OK:", response.ok);
+
+        const text = await response.text();
+
+        console.log("Server response:", text);
+
+        let result;
+
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            result = { message: text };
         }
-        const newId =
-            products.length > 0
-            ? Math.max(...products.map(p => p.id)) + 1
-            : 1;
-        const today =
-            new Date().toLocaleDateString("en-US");
-        const newProduct = {
-            id: newId,
-            productId: productId,
-            productName: productName,
-            category: category,
-            stock: Number(stock),
-            price: Number(price),
-            status: status,
-            image: selectedImage,
-            dateInsert: today,
-            dateUpdate: ""
+
+        if (response.ok) {
+
+            alert("រក្សាទុកជោគជ័យ!");
+
+            console.log("Product created:", result);
+
+            clearForm();
+            fetchProducts();
+
+        } else {
+
+            console.error("Laravel Error:", result);
+
+            let message = "មានបញ្ហាក្នុងការរក្សាទុក!\n";
+
+            if (result.errors) {
+
+                for (const field in result.errors) {
+                    message +=
+                        `- ${result.errors[field].join(", ")}\n`;
+                }
+
+            } else {
+
+                message += result.message || "Unknown error";
+            }
+
+            alert(message);
+        }
+
+    } catch (error) {
+
+        console.error("================================");
+        console.error("FETCH ERROR");
+        console.error(error);
+        console.error("================================");
+
+        alert(
+            "មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ!\n\n" +
+            error.message
+        );
+    }
+}
+    async function updateProduct() {
+        const id = document.getElementById("productId").value;
+        if (!id) return alert("Please select a product to edit!");
+
+        const payload = getFormData();
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/products", {
+                method: "PUT",
+                headers: { 
+                    "Content-Type": "application/json", 
+                    "Accept": "application/json" 
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert("កែប្រែជោគជ័យ!");
+                clearForm();
+                fetchProducts();
+            } else {
+                alert("មានបញ្ហាក្នុងការកែប្រែ!");
+            }
+        } catch (error) {
+            console.error("Error updating product:", error);
+        }
+    }
+
+    async function deleteProduct() {
+        const id = document.getElementById("productId").value;
+        if (!id) return alert("សូមជ្រើសរើសផលិតផលដើម្បីលុប!");
+
+        if (!confirm("តើអ្នកប្រាកដថាចង់លុបផលិតផលនេះមែនទេ?")) return;
+
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+
+            if (response.ok) {
+                alert("លុបជោគជ័យ!");
+                clearForm();
+                fetchProducts();
+            } else {
+                alert("មានបញ្ហាក្នុងការលុប!");
+            }
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    }
+
+    function getFormData() {
+        return {
+            name: document.getElementById("productName").value,
+            category: document.getElementById("category").value,
+            stock: parseInt(document.getElementById("stock").value) || 0,
+            price: parseFloat(document.getElementById("price").value) || 0,
+            status: document.getElementById("status").value,
+            image: selectedImage
         };
-        products.push(newProduct);
-        localStorage.setItem("products", JSON.stringify(products));
-        displayProducts();
-        clearForm();
-        alert("Product added successfully!");
     }
-    function updateProduct() {
-        if (selectedIndex === -1) {
-            alert("Please select a product first.");
-            return;
-        }
-        const product =
-            products[selectedIndex];
-        product.productId =
-            document.getElementById("productId").value.trim();
-        product.productName =
-            document.getElementById("productName").value.trim();
-        product.category =
-            document.getElementById("category").value;
-        product.stock =
-            Number(document.getElementById("stock").value);
-        product.price =
-            Number(document.getElementById("price").value);
-        product.status =
-            document.getElementById("status").value;
-        product.image =
-            selectedImage;
-        product.dateUpdate =
-            new Date().toLocaleDateString("en-US");
-            // Save updated products
-            localStorage.setItem("products", JSON.stringify(products));
-        displayProducts();
-       alert("Product updated successfully!");
-    }
-    function deleteProduct() {
-        if (selectedIndex === -1) {
-            alert("Please select a product first.");
-            return;
-        }
-        const confirmDelete =
-            confirm(
-                "Are you sure you want to delete this product?"
-            );
-        if (!confirmDelete) {
-           return;
-        }
-        products.splice(selectedIndex, 1);
-        localStorage.setItem("products", JSON.stringify(products));
-        selectedIndex = -1;
-        displayProducts();
-        clearForm();
-        alert("Product deleted successfully!");
-    }
+
     function clearForm() {
         document.getElementById("productId").value = "";
         document.getElementById("productName").value = "";
@@ -474,13 +463,16 @@
         document.getElementById("price").value = "";
         document.getElementById("status").value = "";
         document.getElementById("imageInput").value = "";
-        document.getElementById("imagePreview").src = "";
+
+        const img = document.getElementById("imagePreview");
+        img.src = "";
+        img.style.display = "none";
+
         selectedImage = "";
         selectedIndex = -1;
+
         displayProducts();
     }
-    displayProducts();
-
 </script>
 
 </body>

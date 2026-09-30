@@ -129,135 +129,499 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-  let currentUser = JSON.parse(localStorage.getItem('currentUser')) || { name: 'Admin', role: 'Admin' };
-  let orders = JSON.parse(localStorage.getItem('orders')) || [];
-
-  document.addEventListener("DOMContentLoaded", function () {
-    displayOrders();
+const API_URL = "http://127.0.0.1:8000/api/orders";
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
+    id: 1,
+    name: 'Admin',
+    role: 'Admin'
+};
+let orders = [];
+document.addEventListener("DOMContentLoaded", function () {
+    loadOrders();
 });
+async function loadOrders() {
 
-function displayOrders() {
-    let orders = JSON.parse(localStorage.getItem("orders")) || [];
-    let tbody = document.querySelector("table tbody"); // ឬ ID នៃ Table របស់អ្នក
-    
-    if (!tbody) return;
-    tbody.innerHTML = "";
+    try {
 
-    if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center">No orders found.</td></tr>`;
-        return;
-    }
+        const response = await fetch(API_URL, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        });
 
-    orders.forEach(order => {
-        tbody.innerHTML += `
+        if (!response.ok) {
+            throw new Error("Server error");
+        }
+
+        const result = await response.json();
+
+        orders = result.data || [];
+
+        filterOrders();
+
+    } catch (error) {
+
+        console.error("Load Orders Error:", error);
+
+        const tbody =
+            document.getElementById("ordersTableBody");
+
+        tbody.innerHTML = `
             <tr>
-                <td>${order.id}</td>
-                <td>${order.customerName}</td>
-                <td>Takeaway</td> <!-- ឬ Order Type -->
-                <td>$${Number(order.totalPrice).toFixed(2)}</td>
-                <td>${order.dateOrder}</td>
-                <td><span class="badge bg-warning">${order.status || 'Pending'}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-info" onclick="viewDetails('${order.id}')">View</button>
+                <td colspan="7"
+                    class="text-center text-danger py-4">
+                    មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ!
                 </td>
             </tr>
         `;
-    });
+    }
 }
-  function filterOrders() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const status = document.getElementById('statusFilter').value;
+function filterOrders() {
 
-    let filtered = orders;
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase();
 
-    // Filter តាម Role
-    if (currentUser.role === 'Customer') {
-      filtered = orders.filter(o => o.customerId === currentUser.id || o.customerName === currentUser.name);
+    const selectedStatus =
+        document.getElementById("statusFilter").value;
+    let filteredOrders = [...orders];
+    if (currentUser.role === "Customer") {
+        filteredOrders = filteredOrders.filter(order => {
+            return order.customer_id == currentUser.id;
+        });
     }
+    filteredOrders = filteredOrders.filter(order => {
+        const orderNumber =
+            String(order.order_number || "")
+            .toLowerCase();
 
-    // Filter តាម Search & Status
-    filtered = filtered.filter(order => {
-      const matchesSearch = order.orderId.toLowerCase().includes(search) || 
-                            order.customerName.toLowerCase().includes(search);
-      const matchesStatus = (status === 'All') || (order.status === status);
-      return matchesSearch && matchesStatus;
+        const customerName =
+            String(
+                order.customer?.name ||
+                "Walk-in Customer"
+            ).toLowerCase();
+
+        const orderStatus =
+            String(order.status || "")
+            .toLowerCase();
+
+
+        const searchMatch =
+            orderNumber.includes(search) ||
+            customerName.includes(search);
+        const statusMatch =
+            selectedStatus === "All" ||
+            orderStatus === selectedStatus.toLowerCase();
+        return searchMatch && statusMatch;
+
     });
 
-    renderOrdersTable(filtered);
-  }
 
-  function renderOrdersTable(displayOrders) {
-    const tbody = document.getElementById('ordersTableBody');
-    tbody.innerHTML = '';
+    renderOrdersTable(filteredOrders);
+}
+function renderOrdersTable(displayOrders) {
+    const tbody =
+        document.getElementById("ordersTableBody");
 
+    tbody.innerHTML = "";
     if (displayOrders.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">No orders found.</td></tr>`;
-      return;
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="text-center py-4 text-muted">
+                    No orders found.
+                </td>
+            </tr>
+        `;
+
+        return;
     }
+
 
     displayOrders.forEach(order => {
-      const badgeClass = `badge-${order.status.toLowerCase()}`;
-      const isStaff = currentUser.role === 'Admin' || currentUser.role === 'Cashier';
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><strong>${order.orderId}</strong></td>
-        <td>${order.customerName}</td>
-        <td><span class="badge bg-light text-dark border">${order.orderType}</span></td>
-        <td class="fw-bold">$${parseFloat(order.totalPrice).toFixed(2)}</td>
-        <td>${order.date}</td>
-        <td><span class="badge ${badgeClass}">${order.status}</span></td>
-        <td>
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="viewOrderDetails('${order.orderId}')"><i class="bi bi-eye"></i> View</button>
-          ${isStaff ? `
-            <select class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="updateStatus('${order.orderId}', this.value)">
-              <option value="Pending" ${order.status==='Pending'?'selected':''}>Pending</option>
-              <option value="Preparing" ${order.status==='Preparing'?'selected':''}>Preparing</option>
-              <option value="Completed" ${order.status==='Completed'?'selected':''}>Completed</option>
-              <option value="Cancelled" ${order.status==='Cancelled'?'selected':''}>Cancelled</option>
-            </select>
-          ` : ''}
-        </td>
-      `;
-      tbody.appendChild(tr);
+        // Customer
+        const customerName =
+            order.customer?.name ||
+            "Walk-in Customer";
+
+
+        // Order Type
+        const orderType =
+            order.order_type ||
+            "Takeaway";
+
+
+        // Total
+        const totalPrice =
+            Number(order.total_amount || 0);
+
+
+        // Date
+        const orderDate =
+            order.created_at
+                ? new Date(order.created_at)
+                    .toLocaleDateString()
+                : "-";
+
+
+        // Status
+        const status =
+            order.status || "pending";
+
+
+        const statusText =
+            status.charAt(0).toUpperCase() +
+            status.slice(1);
+
+
+        const badgeClass =
+            `badge-${status}`;
+
+
+        // Admin / Cashier
+        const isStaff =
+            currentUser.role === "Admin" ||
+            currentUser.role === "Cashier";
+
+
+        const tr =
+            document.createElement("tr");
+
+
+        tr.innerHTML = `
+
+            <td>
+                <strong>
+                    ${order.order_number}
+                </strong>
+            </td>
+
+
+            <td>
+                ${customerName}
+            </td>
+
+
+            <td>
+                <span class="badge bg-light text-dark border">
+                    ${orderType}
+                </span>
+            </td>
+
+
+            <td class="fw-bold">
+                $${totalPrice.toFixed(2)}
+            </td>
+
+
+            <td>
+                ${orderDate}
+            </td>
+
+
+            <td>
+                <span class="badge ${badgeClass}">
+                    ${statusText}
+                </span>
+            </td>
+
+
+            <td>
+
+                <button
+                    class="btn btn-sm btn-outline-primary me-1"
+                    onclick="viewOrderDetails(${order.id})">
+
+                    <i class="bi bi-eye"></i>
+                    View
+
+                </button>
+
+
+                ${
+                    isStaff
+                    ?
+                    `
+
+                    <select
+                        class="form-select form-select-sm d-inline-block"
+                        style="width: auto;"
+                        onchange="updateStatus(${order.id}, this.value)">
+
+                        <option value="Pending"
+                            ${status === "pending" ? "selected" : ""}>
+                            Pending
+                        </option>
+
+                        <option value="Preparing"
+                            ${status === "preparing" ? "selected" : ""}>
+                            Preparing
+                        </option>
+
+                        <option value="Completed"
+                            ${status === "completed" ? "selected" : ""}>
+                            Completed
+                        </option>
+
+                        <option value="Cancelled"
+                            ${status === "cancelled" ? "selected" : ""}>
+                            Cancelled
+                        </option>
+
+                    </select>
+
+                    `
+                    :
+                    ""
+                }
+
+            </td>
+
+        `;
+
+
+        tbody.appendChild(tr);
+
     });
-  }
+}
 
-  function updateStatus(orderId, newStatus) {
-    const order = orders.find(o => o.orderId === orderId);
-    if (order) {
-      order.status = newStatus;
-      localStorage.setItem('orders', JSON.stringify(orders));
-      filterOrders();
+
+// =====================================
+// UPDATE STATUS
+// =====================================
+async function updateStatus(orderId, newStatus) {
+
+    const order =
+        orders.find(order => order.id == orderId);
+
+
+    if (!order) {
+
+        alert("Order not found!");
+
+        return;
     }
-  }
 
-  function viewOrderDetails(orderId) {
-    const order = orders.find(o => o.orderId === orderId);
-    if (!order) return;
 
-    document.getElementById('modalOrderId').innerText = order.orderId;
-    document.getElementById('modalCustomerName').innerText = order.customerName;
-    document.getElementById('modalDate').innerText = order.date;
-    document.getElementById('modalType').innerText = order.orderType;
-    document.getElementById('modalTotalPrice').innerText = `$${parseFloat(order.totalPrice).toFixed(2)}`;
+    // Convert Pending -> pending
+    newStatus =
+        newStatus.toLowerCase();
 
-    const itemsBody = document.getElementById('modalItemsBody');
-    itemsBody.innerHTML = '';
-    order.items.forEach(item => {
-      itemsBody.innerHTML += `
-        <tr>
-          <td>${item.name}</td>
-          <td class="text-center">${item.qty}</td>
-          <td class="text-end">$${parseFloat(item.price).toFixed(2)}</td>
-          <td class="text-end">$${(item.qty * item.price).toFixed(2)}</td>
-        </tr>
-      `;
-    });
 
-    new bootstrap.Modal(document.getElementById('orderModal')).show();
-  }
+    try {
+
+        const response = await fetch(
+            API_URL + "/" + orderId,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    customer_id:
+                        order.customer_id,
+
+                    order_type:
+                        order.order_type,
+
+                    total_amount:
+                        order.total_amount,
+
+                    status:
+                        newStatus
+
+                })
+            }
+        );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(result);
+
+            alert(
+                result.message ||
+                "មានបញ្ហាក្នុងការកែប្រែ Status!"
+            );
+
+            return;
+        }
+
+
+        alert("កែប្រែ Status ជោគជ័យ!");
+
+
+        // Load again from database
+        loadOrders();
+
+    } catch (error) {
+
+        console.error(
+            "Update Status Error:",
+            error
+        );
+
+        alert(
+            "មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ!"
+        );
+    }
+}
+
+
+// =====================================
+// VIEW ORDER DETAILS
+// =====================================
+async function viewOrderDetails(orderId) {
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL + "/" + orderId,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Order not found"
+            );
+        }
+
+
+        const result =
+            await response.json();
+
+
+        const order =
+            result.data;
+
+
+        // Order ID
+        document.getElementById(
+            "modalOrderId"
+        ).innerText =
+            order.order_number;
+
+
+        // Customer
+        document.getElementById(
+            "modalCustomerName"
+        ).innerText =
+            order.customer?.name ||
+            "Walk-in Customer";
+
+
+        // Date
+        document.getElementById(
+            "modalDate"
+        ).innerText =
+            order.created_at
+                ? new Date(
+                    order.created_at
+                  ).toLocaleString()
+                : "-";
+
+
+        // Type
+        document.getElementById(
+            "modalType"
+        ).innerText =
+            order.order_type ||
+            "Takeaway";
+
+
+        // Total
+        document.getElementById(
+            "modalTotalPrice"
+        ).innerText =
+            "$" +
+            Number(
+                order.total_amount || 0
+            ).toFixed(2);
+
+
+        // =================================
+        // ITEMS
+        // =================================
+        const itemsBody =
+            document.getElementById(
+                "modalItemsBody"
+            );
+
+
+        itemsBody.innerHTML = "";
+
+
+        /*
+         * ពេលនេះ Backend orders table
+         * មិនទាន់មាន order_items table
+         *
+         * ដូច្នេះបង្ហាញ No items found
+         */
+
+        itemsBody.innerHTML = `
+            <tr>
+                <td colspan="4"
+                    class="text-center text-muted">
+                    No items found.
+                </td>
+            </tr>
+        `;
+
+
+        // =================================
+        // OPEN MODAL
+        // =================================
+        const modalElement =
+            document.getElementById(
+                "orderModal"
+            );
+
+
+        const modal =
+            new bootstrap.Modal(
+                modalElement
+            );
+
+
+        modal.show();
+
+
+    } catch (error) {
+
+        console.error(
+            "View Order Error:",
+            error
+        );
+
+        alert(
+            "មិនអាចទាញយកព័ត៌មាន Order បានទេ!"
+        );
+    }
+}
 </script>
+
 </body>
 </html>
